@@ -31,7 +31,6 @@ function generateBar(needsHeader) {
             newNote = newNote + "_";
         }
         let noteValue = Math.floor(1 + Math.random() * 7);
-        console.log(noteValue);
         newNote = newNote + numToNote[noteValue];
         let newNoteLength = Math.floor(1 + Math.random() * 8); // Maybe just use remaining time?
         while (length + newNoteLength > 8 || newNoteLength == 5) { // 5 is not well defined
@@ -40,7 +39,6 @@ function generateBar(needsHeader) {
         newNote = newNote + newNoteLength;
         length = length + newNoteLength;
         abcString = abcString + newNote + " ";
-        console.log(newNote);
     }
     return abcString;
 }
