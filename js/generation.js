@@ -58,9 +58,9 @@ function generateNotes(numNotes) {
         let altered = Math.random();
         if (altered < 0.3) {
             abcString = abcString + "^";
-        } else if (altered > 0.7) {
+        } /*else if (altered > 0.7) {
             abcString = abcString + "_";
-        } else {
+        } */else {
             abcString = abcString + "=";
         }
         let newNote = numToNote[1 + Math.floor(Math.random() * 7)];
