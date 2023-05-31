@@ -1,5 +1,27 @@
 import { generateNotes } from './generation.js';
 import { startPitchDetect } from './pitchdetect.js';
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyA5KkEysKgxhPn2rOTVE76Hf3JGU37U5_Y",
+  authDomain: "sight-reading-trainer-898b0.firebaseapp.com",
+  projectId: "sight-reading-trainer-898b0",
+  storageBucket: "sight-reading-trainer-898b0.appspot.com",
+  messagingSenderId: "6764430054",
+  appId: "1:6764430054:web:b7fce180a936b4e25ab127",
+  measurementId: "G-PDT5BBJ6MT"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+
 
 let currentNoteIndex;
 let currentNote;
