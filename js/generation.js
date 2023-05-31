@@ -11,7 +11,7 @@ const numToNote = {
 };
 
 function generateHeader() {
-    let abcString = "X:1\nT:Random Bars\nM:4/4\nL:1/8\nK:C\n";
+    let abcString = "X:1\nT:Random Bars\nM:4/4\nQ:1/4 = 100\nL:1/8\nK:C\n";
     return abcString;
 }
 
@@ -47,6 +47,24 @@ function generateBars(numBars) {
     let abcString = generateHeader();
     for (let i = 0; i < numBars; i++) {
         abcString = abcString + generateBar(false) + "| ";
+    }
+    return abcString;
+}
+
+// Creates a sequence of arhythmic notes
+function generateNotes(numNotes) {
+    let abcString = "X:1\nT:Random Notes\nK:C\n"
+    for (let i = 0; i < numNotes; i++) {
+        let altered = Math.random();
+        if (altered < 0.3) {
+            abcString = abcString + "^";
+        } else if (altered > 0.7) {
+            abcString = abcString + "_";
+        } else {
+            abcString = abcString + "=";
+        }
+        let newNote = numToNote[1 + Math.floor(Math.random() * 7)];
+        abcString = abcString + newNote + "0 ";
     }
     return abcString;
 }

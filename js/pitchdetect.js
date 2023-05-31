@@ -40,9 +40,6 @@ var detectorElem,
 	detuneAmount;
 
 function setup() {
-	audioContext = new AudioContext();
-	MAX_SIZE = Math.max(4,Math.floor(audioContext.sampleRate/5000));	// corresponds to a 5kHz signal
-
 	detectorElem = document.getElementById( "detector" );
 	canvasElem = document.getElementById( "output" );
 	DEBUGCANVAS = document.getElementById( "waveform" );
@@ -114,86 +111,6 @@ function startPitchDetect() {
         console.error(`${err.name}: ${err.message}`);
         alert('Stream generation failed.');
     });
-}
-
-function toggleOscillator() {
-    if (isPlaying) {
-        //stop playing and return
-        sourceNode.stop( 0 );
-        sourceNode = null;
-        analyser = null;
-        isPlaying = false;
-		if (!window.cancelAnimationFrame)
-			window.cancelAnimationFrame = window.webkitCancelAnimationFrame;
-        window.cancelAnimationFrame( rafID );
-        return "play oscillator";
-    }
-    sourceNode = audioContext.createOscillator();
-
-    analyser = audioContext.createAnalyser();
-    analyser.fftSize = 2048;
-    sourceNode.connect( analyser );
-    analyser.connect( audioContext.destination );
-    sourceNode.start(0);
-    isPlaying = true;
-    isLiveInput = false;
-    updatePitch();
-
-    return "stop";
-}
-
-function toggleLiveInput() {
-    if (isPlaying) {
-        //stop playing and return
-        sourceNode.stop( 0 );
-        sourceNode = null;
-        analyser = null;
-        isPlaying = false;
-		if (!window.cancelAnimationFrame)
-			window.cancelAnimationFrame = window.webkitCancelAnimationFrame;
-        window.cancelAnimationFrame( rafID );
-    }
-    navigator.mediaDevices.getUserMedia(
-    	{
-            "audio": {
-                "mandatory": {
-                    "googEchoCancellation": "false",
-                    "googAutoGainControl": "false",
-                    "googNoiseSuppression": "false",
-                    "googHighpassFilter": "false"
-                },
-                "optional": []
-            },
-        }, gotStream);
-}
-
-function togglePlayback() {
-    if (isPlaying) {
-        //stop playing and return
-        sourceNode.stop( 0 );
-        sourceNode = null;
-        analyser = null;
-        isPlaying = false;
-		if (!window.cancelAnimationFrame)
-			window.cancelAnimationFrame = window.webkitCancelAnimationFrame;
-        window.cancelAnimationFrame( rafID );
-        return "start";
-    }
-
-    sourceNode = audioContext.createBufferSource();
-    sourceNode.buffer = theBuffer;
-    sourceNode.loop = true;
-
-    analyser = audioContext.createAnalyser();
-    analyser.fftSize = 2048;
-    sourceNode.connect( analyser );
-    analyser.connect( audioContext.destination );
-    sourceNode.start( 0 );
-    isPlaying = true;
-    isLiveInput = false;
-    updatePitch();
-
-    return "stop";
 }
 
 var rafID = null;
@@ -304,7 +221,7 @@ function updatePitch( time ) {
 	 	var note =  noteFromPitch( pitch );
 		noteElem.innerHTML = noteStrings[note%12];
 		var detune = centsOffFromPitch( pitch, note );
-		if (detune == 0 ) {
+		if (Math.abs(detune) < 15) { // If within 15 cents, then say in tune
 			detuneElem.className = "";
 			detuneAmount.innerHTML = "--";
 		} else {

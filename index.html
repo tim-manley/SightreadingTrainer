@@ -24,12 +24,7 @@
     <body>
         <div id="testTarget"></div>
         <button onclick="newExample()">Generate new example</button>
-        <p><button onclick="startPitchDetect();">Start</button></p>
-		<p>
-			<button onclick="this.innerText = togglePlayback()">use demo audio</button>
-			<button onclick="toggleLiveInput()">use live input</button>
-			<button onclick="toggleOscillator()">use oscillator</button>
-		</p>
+        <p><button onclick="startPitchDetect();">Start pitch analysis</button></p>
 
 		<div id="detector" class="vague">
 			<div class="pitch"><span id="pitch">--</span>Hz</div>
@@ -39,10 +34,14 @@
 		</div>
         <script>
             function newExample() {
-                var abcString = generateBars(8);
+                var abcString = generateNotes(8);
                 console.log(abcString);
                 console.log(ABCJS);
                 ABCJS.renderAbc("testTarget", abcString);
+            }
+
+            window.onload = () => {
+                newExample();
             }
 
         </script>
