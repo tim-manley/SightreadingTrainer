@@ -9,6 +9,7 @@ function LoginPage() {
     const [signInWithEmailAndPassword, user, loading, error] = useSignInWithEmailAndPassword(auth);
 
     const handleLogin = (e) => {
+        console.log(e);
         e.PreventDefault();
         signInWithEmailAndPassword(email, password);
     }

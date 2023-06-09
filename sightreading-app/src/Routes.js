@@ -1,8 +1,8 @@
 import React from "react";
 import { BrowserRouter, Route, Routes, Redirect, Navigate } from 'react-router-dom';
-import HomePage from './components/Home';
-import LoginPage from './components/Login';
-import ProtectedPage from './components/ProtectedPage';
+import HomePage from './pages/Home';
+import LoginPage from './pages/Login';
+import ProtectedPage from './pages/ProtectedPage';
 import { auth } from './firebase.js';
 
 function BrowserRoutes() {
