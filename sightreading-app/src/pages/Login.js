@@ -25,6 +25,7 @@ function LoginPage() {
         return <p>Loading...</p>;
       }
       if (user) {
+        console.log(user.email);
         return (
           <Navigate to="/protected" />
         );
