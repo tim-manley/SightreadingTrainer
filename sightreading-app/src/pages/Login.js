@@ -1,6 +1,7 @@
 import React from 'react';
 import { auth } from '../firebase.js';
 import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
+import { Navigate } from 'react-router-dom';
 
 function LoginPage() {
     const [email, setEmail] = React.useState('');
@@ -9,10 +10,25 @@ function LoginPage() {
     const [signInWithEmailAndPassword, user, loading, error] = useSignInWithEmailAndPassword(auth);
 
     const handleLogin = (e) => {
-        console.log(e);
-        e.PreventDefault();
+        e.preventDefault();
         signInWithEmailAndPassword(email, password);
     }
+
+    if (error) {
+        return (
+          <div>
+            <p>Error: {error.message}</p>
+          </div>
+        );
+      }
+      if (loading) {
+        return <p>Loading...</p>;
+      }
+      if (user) {
+        return (
+          <Navigate to="/protected" />
+        );
+      }
 
     return (
         <div>
