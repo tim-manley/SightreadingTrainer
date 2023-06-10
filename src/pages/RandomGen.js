@@ -1,7 +1,6 @@
 import React from 'react'
 import '../detector.css'
 import { startPitchDetect } from '../pitchdetect'
-import abcjs from "abcjs"
 import { newExample, checker } from '../checker'
 
 function RandomGen() {

@@ -42,7 +42,7 @@ function highlightNote(noteIndex, color) {
 function nextNote() {
     highlightNote(currentNoteIndex, 'green');
     currentNoteIndex++;
-    if (highlightNote(currentNoteIndex, 'red') == -1) {
+    if (highlightNote(currentNoteIndex, 'red') === -1) {
         return;
     };
     let abcNote = getAbcNote(currentNoteIndex);
@@ -57,7 +57,7 @@ let elapsed = 0;
 function checkCorrect() {
     let playedNote = document.getElementById('note').innerHTML;
 
-    if (playedNote == currentNote) {
+    if (playedNote === currentNote) {
         elapsed += interval;
 
         if (elapsed >= timeThresh) {
@@ -70,5 +70,5 @@ function checkCorrect() {
 }
 
 export function checker() {
-    let checker = setInterval(checkCorrect, interval);
+    setInterval(checkCorrect, interval);
 }
