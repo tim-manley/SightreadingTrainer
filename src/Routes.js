@@ -1,9 +1,9 @@
 import React from "react";
 import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
-import HomePage from './pages/Home';
+import LandingPage from './pages/Landing';
 import LoginPage from './pages/Login';
 import SignUp from "./pages/SignUp";
-import ProtectedPage from './pages/ProtectedPage';
+import HomePage from './pages/Home';
 import RandomGen from "./pages/RandomGen";
 import { auth } from './firebase.js';
 import { useIdToken } from "react-firebase-hooks/auth";
@@ -29,10 +29,10 @@ function BrowserRoutes() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route exact path="/" element={<HomePage />} />
-        <Route exact path="/login" element={user ? <Navigate to="/protected" /> : <LoginPage />}/>
-        <Route exact path="/protected" element={user ? <ProtectedPage /> : <Navigate to="/"/>}/>
-        <Route exact path="/signup" element={user ? <Navigate to="/protected" /> : <SignUp />} />
+        <Route exact path="/" element={<LandingPage />} />
+        <Route exact path="/login" element={user ? <Navigate to="/home" /> : <LoginPage />}/>
+        <Route exact path="/home" element={user ? <HomePage /> : <Navigate to="/"/>}/>
+        <Route exact path="/signup" element={user ? <Navigate to="/home" /> : <SignUp />} />
         <Route exact path="/random" element={<RandomGen />} />
       </Routes>
     </BrowserRouter>

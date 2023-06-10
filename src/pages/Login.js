@@ -1,3 +1,5 @@
+// TODO: Replace with Login Modal
+
 import React from 'react';
 import { auth } from '../firebase.js';
 import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
