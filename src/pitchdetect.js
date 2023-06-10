@@ -97,8 +97,8 @@ function autoCorrelate( buf, sampleRate ) {
 	var SIZE = buf.length;
 	var rms = 0;
 
-	for (var i=0;i<SIZE;i++) {
-		var val = buf[i];
+	for (var n=0;n<SIZE;n++) {
+		var val = buf[n];
 		rms += val*val;
 	}
 	rms = Math.sqrt(rms/SIZE);
@@ -106,25 +106,25 @@ function autoCorrelate( buf, sampleRate ) {
 		return -1;
 
 	var r1=0, r2=SIZE-1, thres=0.2;
-	for (var j=0; j<SIZE/2; j++)
-		if (Math.abs(buf[j])<thres) { r1=j; break; }
-	for (var k=1; k<SIZE/2; k++)
-		if (Math.abs(buf[SIZE-k])<thres) { r2=SIZE-k; break; }
+	for (var i=0; i<SIZE/2; i++)
+		if (Math.abs(buf[i])<thres) { r1=i; break; }
+	for (var j=1; j<SIZE/2; j++)
+		if (Math.abs(buf[SIZE-j])<thres) { r2=SIZE-j; break; }
 
 	buf = buf.slice(r1,r2);
 	SIZE = buf.length;
 
 	var c = new Array(SIZE).fill(0);
-	for (var l=0; l<SIZE; l++)
-		for (var m=0; m<SIZE-l; m++)
-			c[l] = c[l] + buf[m]*buf[m+i];
+	for (var k=0; k<SIZE; k++)
+		for (var l=0; l<SIZE-k; l++)
+			c[k] = c[k] + buf[l]*buf[l+k];
 
 	var d=0; while (c[d]>c[d+1]) d++;
 	var maxval=-1, maxpos=-1;
-	for (var n=d; n<SIZE; n++) {
-		if (c[n] > maxval) {
-			maxval = c[n];
-			maxpos = n;
+	for (var m=d; m<SIZE; m++) {
+		if (c[m] > maxval) {
+			maxval = c[m];
+			maxpos = m;
 		}
 	}
 	var T0 = maxpos;
