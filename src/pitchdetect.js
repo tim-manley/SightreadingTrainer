@@ -25,15 +25,9 @@ SOFTWARE.
 window.AudioContext = window.AudioContext || window.webkitAudioContext;
 
 var audioContext = null;
-var isPlaying = false;
-var sourceNode = null;
 var analyser = null;
-var theBuffer = null;
-var DEBUGCANVAS = null;
 var mediaStreamSource = null;
-var detectorElem, 
-	canvasElem,
-	waveCanvas,
+var detectorElem,
 	pitchElem,
 	noteElem,
 	detuneElem,
@@ -41,40 +35,10 @@ var detectorElem,
 
 function setup() {
 	detectorElem = document.getElementById( "detector" );
-	canvasElem = document.getElementById( "output" );
-	DEBUGCANVAS = document.getElementById( "waveform" );
-	if (DEBUGCANVAS) {
-		waveCanvas = DEBUGCANVAS.getContext("2d");
-		waveCanvas.strokeStyle = "black";
-		waveCanvas.lineWidth = 1;
-	}
 	pitchElem = document.getElementById( "pitch" );
 	noteElem = document.getElementById( "note" );
 	detuneElem = document.getElementById( "detune" );
 	detuneAmount = document.getElementById( "detune_amt" );
-
-	detectorElem.ondragenter = function () { 
-		this.classList.add("droptarget"); 
-		return false; };
-	detectorElem.ondragleave = function () { this.classList.remove("droptarget"); return false; };
-	detectorElem.ondrop = function (e) {
-  		this.classList.remove("droptarget");
-  		e.preventDefault();
-		theBuffer = null;
-
-	  	var reader = new FileReader();
-	  	reader.onload = function (event) {
-	  		audioContext.decodeAudioData( event.target.result, function(buffer) {
-	    		theBuffer = buffer;
-	  		}, function(){alert("error loading!");} ); 
-
-	  	};
-	  	reader.onerror = function (event) {
-	  		alert("Error: " + reader.error );
-		};
-	  	reader.readAsArrayBuffer(e.dataTransfer.files[0]);
-	  	return false;
-	};
 }
 
 export function startPitchDetect() {	
@@ -110,8 +74,6 @@ export function startPitchDetect() {
     });
 }
 
-var rafID = null;
-var tracks = null;
 var buflen = 2048;
 var buf = new Float32Array( buflen );
 
@@ -144,25 +106,25 @@ function autoCorrelate( buf, sampleRate ) {
 		return -1;
 
 	var r1=0, r2=SIZE-1, thres=0.2;
-	for (var i=0; i<SIZE/2; i++)
-		if (Math.abs(buf[i])<thres) { r1=i; break; }
-	for (var i=1; i<SIZE/2; i++)
-		if (Math.abs(buf[SIZE-i])<thres) { r2=SIZE-i; break; }
+	for (var j=0; j<SIZE/2; j++)
+		if (Math.abs(buf[j])<thres) { r1=j; break; }
+	for (var k=1; k<SIZE/2; k++)
+		if (Math.abs(buf[SIZE-k])<thres) { r2=SIZE-k; break; }
 
 	buf = buf.slice(r1,r2);
 	SIZE = buf.length;
 
 	var c = new Array(SIZE).fill(0);
-	for (var i=0; i<SIZE; i++)
-		for (var j=0; j<SIZE-i; j++)
-			c[i] = c[i] + buf[j]*buf[j+i];
+	for (var l=0; l<SIZE; l++)
+		for (var m=0; m<SIZE-l; m++)
+			c[l] = c[l] + buf[m]*buf[m+i];
 
 	var d=0; while (c[d]>c[d+1]) d++;
 	var maxval=-1, maxpos=-1;
-	for (var i=d; i<SIZE; i++) {
-		if (c[i] > maxval) {
-			maxval = c[i];
-			maxpos = i;
+	for (var n=d; n<SIZE; n++) {
+		if (c[n] > maxval) {
+			maxval = c[n];
+			maxpos = n;
 		}
 	}
 	var T0 = maxpos;
@@ -176,36 +138,11 @@ function autoCorrelate( buf, sampleRate ) {
 }
 
 function updatePitch( time ) {
-	var cycles = new Array;
 	analyser.getFloatTimeDomainData( buf );
 	var ac = autoCorrelate( buf, audioContext.sampleRate );
 	// TODO: Paint confidence meter on canvasElem here.
 
-	if (DEBUGCANVAS) {  // This draws the current waveform, useful for debugging
-		waveCanvas.clearRect(0,0,512,256);
-		waveCanvas.strokeStyle = "red";
-		waveCanvas.beginPath();
-		waveCanvas.moveTo(0,0);
-		waveCanvas.lineTo(0,256);
-		waveCanvas.moveTo(128,0);
-		waveCanvas.lineTo(128,256);
-		waveCanvas.moveTo(256,0);
-		waveCanvas.lineTo(256,256);
-		waveCanvas.moveTo(384,0);
-		waveCanvas.lineTo(384,256);
-		waveCanvas.moveTo(512,0);
-		waveCanvas.lineTo(512,256);
-		waveCanvas.stroke();
-		waveCanvas.strokeStyle = "black";
-		waveCanvas.beginPath();
-		waveCanvas.moveTo(0,buf[0]);
-		for (var i=1;i<512;i++) {
-			waveCanvas.lineTo(i,128+(buf[i]*128));
-		}
-		waveCanvas.stroke();
-	}
-
- 	if (ac == -1) {
+ 	if (ac === -1) {
  		detectorElem.className = "vague";
 	 	pitchElem.innerText = "--";
 		noteElem.innerText = "-";
@@ -232,5 +169,5 @@ function updatePitch( time ) {
 
 	if (!window.requestAnimationFrame)
 		window.requestAnimationFrame = window.webkitRequestAnimationFrame;
-	rafID = window.requestAnimationFrame( updatePitch );
+	window.requestAnimationFrame( updatePitch );
 }
