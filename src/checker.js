@@ -6,8 +6,8 @@ import $ from "jquery"
 let currentNoteIndex;
 let currentNote;
 
-export function newExample() {
-    var abcString = generateNotes(8);
+export function newExample(numNotes, clef, intervals) {
+    var abcString = generateNotes(numNotes, clef, intervals);
     abcjs.renderAbc("target", abcString);
     // Color the first note blue
     highlightNote(0, 'red');
@@ -26,8 +26,13 @@ function getNoteTag(noteIndex) {
 
 function getAbcNote(noteIndex) {
     let note = getNoteTag(noteIndex);
-    let abcNoteVal = note.getAttribute("data-name");
-    return abcNoteVal;
+    try {
+        let abcNoteVal = note.getAttribute("data-name");
+        return abcNoteVal;
+    } catch (error) {
+        console.log("No notes");
+        return null;
+    }
 }
 
 function highlightNote(noteIndex, color) {

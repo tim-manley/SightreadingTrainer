@@ -1,6 +1,9 @@
 //var noteStrings = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
 
 export function abcNoteToNote(abcNote) {
+    if (!abcNote) {
+        return null;
+    }
     if (abcNote[0] === "^") {
         if (abcNote[1] === "E") {
             return "F";
