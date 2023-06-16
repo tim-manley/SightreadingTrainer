@@ -31,9 +31,9 @@ function BrowserRoutes() {
       <Routes>
         <Route exact path="/" element={<LandingPage />} />
         <Route exact path="/login" element={user ? <Navigate to="/home" /> : <LoginPage />}/>
-        <Route exact path="/home" element={user ? <HomePage /> : <Navigate to="/"/>}/>
+        <Route exact path="/home" element={user ? <HomePage /> : <Navigate to="/login"/>}/>
         <Route exact path="/signup" element={user ? <Navigate to="/home" /> : <SignUp />} />
-        <Route exact path="/random" element={<RandomGen />} />
+        <Route exact path="/random" element={user ? <RandomGen /> : <Navigate to="/login"/>} />
       </Routes>
     </BrowserRouter>
   );
