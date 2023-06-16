@@ -5,9 +5,13 @@ import { newExample, checker } from '../checker'
 
 function RandomGen() {
 
-    const intervals = new Set();
+    const [intervals, setIntervals] = useState([]);
     const [clef, setClef] = useState('');
     const [numNotes, setNumNotes] = useState(0);
+    const [range, setRange] = useState([1, 49]); // Default is whole thing
+
+    const rangeVals = Array.from({length: 49}, (_, i) => i + 1); // Numbers 1-49
+    const intervalVals = Array.from(Array(13).keys()); // Numbers 0-12
 
     const handlePitchDetect = () => {
         startPitchDetect();
@@ -15,32 +19,72 @@ function RandomGen() {
     }
 
     const handleNewExample = () => {
-        newExample(numNotes, clef, intervals);
+        console.log(numNotes, clef, intervals, range);
+        newExample(numNotes, clef, intervals, range);
+    }
+
+    const handleIntervalsChange = (e) => {
+        let copyState = [...intervals];
+        if (e.target.checked) {
+            copyState.push(parseInt(e.target.value))
+        } else {
+            const index = copyState.indexOf(parseInt(e.target.value))
+            if (index > -1) {
+                copyState.splice(index, 1)
+            }
+        }
+        setIntervals(copyState);
+    }
+
+    const handleRangeChange = (e) => {
+        let copyState = [...range];
+        if (e.target.name === "fromRange") {
+            copyState[0] = parseInt(e.target.value);
+        } else if (e.target.name === "toRange") {
+            copyState[1] = parseInt(e.target.value);
+        } else {
+            console.log("something went wrong");
+            // TODO: Handle error...
+        }
+        setRange(copyState);
     }
 
     return (
         <div>
             <div id="target"></div>
-            <form>
+            <div id="options">
                 <p>Choose how many notes:</p>
                 <input type="number" name="numNotes" id="numNotes" onChange={(e) => setNumNotes(e.target.value)}/>
                 <p>Choose a clef:</p>
-                <input type="radio" name="clef" id="trebleClef" value="treble" onChange={(e) => setClef(e.target.value)}/>
+                <input type="radio" name="clef" id="trebleClef" value="treble" onChange={(e) => {
+                    console.log(intervals);
+                    setClef(e.target.value)
+                    }}/>
                 <label htmlFor="trebleClef">Treble</label><br />
                 <input type="radio" name="clef" id="bassClef" value="bass" onChange={(e) => setClef(e.target.value)}/>
                 <label htmlFor="bassClef">Bass</label>
                 <p>Select intervals to be included:</p>
-                <input type="checkbox" name='intervals' id="fourth" onChange={(e) => {
-                    e.target.checked ? intervals.add(5) : intervals.delete(5);
-                }}/>
-                <label htmlFor="fourth">Fourths</label>
-                <input type="checkbox" name='intervals' id="fifth" onChange={(e) => {
-                    e.target.checked ? intervals.add(7) : intervals.delete(7);
-                }}/>
-                <label htmlFor="fifth">Fifths</label>
-            </form>
-            <button id="newExample" onClick={handleNewExample}>Generate new example</button>
-            <button id="pitchDetect" onClick={handlePitchDetect}>Start pitch analysis</button>
+                {intervalVals.map(num => (
+                    <div>
+                        <input type="checkbox" name='intervals' id={num} value={num} onChange={(e) => handleIntervalsChange(e)}/>
+                        <label htmlFor={num}>{num}</label>
+                    </div>
+                ))}
+                <button id="newExample" onClick={handleNewExample}>Generate new example</button>
+                <button id="pitchDetect" onClick={handlePitchDetect}>Start pitch analysis</button><br />
+
+                <select name="fromRange" id="fromRange" onChange={(e) => handleRangeChange(e)}>
+                    {rangeVals.map(num => (
+                        <option key={num} value={num}>{num}</option>
+                    ))}
+                </select>
+                <select name="toRange" id="toRange" onChange={(e) => handleRangeChange(e)}>
+                    {rangeVals.map(num => (
+                        <option key={num} value={num}>{num}</option>
+                    ))}
+                </select>
+            </div>
+            
 
             <div id="detector" className="vague">
                 <div className="pitch"><span id="pitch">--</span>Hz</div>
