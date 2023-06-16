@@ -1,19 +1,8 @@
 import { abcNoteToNote } from "./abcutil";
-import abcjs from "abcjs"
-import { generateNotes } from "./generator";
 import $ from "jquery"
 
 let currentNoteIndex;
 let currentNote;
-
-export function newExample(params) {
-    var abcString = generateNotes(params);
-    abcjs.renderAbc("target", abcString);
-    // Color the first note blue
-    highlightNote(0, 'red');
-    currentNoteIndex = 0;
-    currentNote = abcNoteToNote(getAbcNote(currentNoteIndex));
-}
 
 function getNoteTag(noteIndex) {
     let noteWrapper = $("#target").find(`[data-index='${noteIndex}']`);
@@ -54,26 +43,33 @@ function nextNote() {
     currentNote = abcNoteToNote(abcNote);
 }
 
-let timeThresh = 600;
-let interval = 100;
-let elapsed = 0;
+export function checker() {
+    // Color the first note blue
+    highlightNote(0, 'red');
+    currentNoteIndex = 0;
+    currentNote = abcNoteToNote(getAbcNote(currentNoteIndex));
 
+    // Set checking params
+    const timeThresh = 600;
+    const interval = 100;
+    let elapsed = 0;
 
-function checkCorrect() {
-    let playedNote = document.getElementById('note').innerHTML;
-
-    if (playedNote === currentNote) {
-        elapsed += interval;
-
-        if (elapsed >= timeThresh) {
-            nextNote();
+    // Private checker helper
+    function checkCorrect() {
+        let playedNote = document.getElementById('note').innerHTML;
+    
+        if (playedNote === currentNote) {
+            elapsed += interval;
+    
+            if (elapsed >= timeThresh) {
+                nextNote();
+                elapsed = 0;
+            }
+        } else {
             elapsed = 0;
         }
-    } else {
-        elapsed = 0;
     }
-}
 
-export function checker() {
+    // Start listening and comparing to current note
     setInterval(checkCorrect, interval);
 }

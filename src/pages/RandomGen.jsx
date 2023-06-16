@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import '../detector.css'
 import { startPitchDetect } from '../pitchdetect'
-import { newExample, checker } from '../checker'
+import { checker } from '../checker'
+import { newExample } from '../generator'
 
 function RandomGen() {
 
@@ -46,13 +47,9 @@ function RandomGen() {
         range: [0, 0],
     })
 
-    const handlePitchDetect = () => {
-        startPitchDetect();
-        checker();
-    }
-
     const handleNewExample = () => {
         newExample(params);
+        checker();
     }
 
     const handleIntervalsChange = (e) => {
@@ -113,7 +110,7 @@ function RandomGen() {
             </div>
 
             <button id="newExample" onClick={handleNewExample}>Generate new example</button>
-            <button id="pitchDetect" onClick={handlePitchDetect}>Start pitch analysis</button><br />
+            <button id="pitchDetect" onClick={startPitchDetect}>Start pitch analysis</button><br />
             
 
             <div id="detector" className="vague">

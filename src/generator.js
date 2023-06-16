@@ -1,3 +1,5 @@
+import abcjs from 'abcjs'
+
 // Generates random ABC music encoding
 
 // Each note from lowest possible to highest possible is given a number, and mapped to its abcjs values
@@ -56,7 +58,7 @@ const numToNote = [
 ];
 
 // Creates a sequence of arhythmic notes
-export function generateNotes(params) {
+function generateNotes(params) {
     // Parse params
     const numNotes = params.numNotes;
     const clef = params.clef;
@@ -109,4 +111,9 @@ export function generateNotes(params) {
         abcString = abcString + currentNote + "0 ";
     }
     return abcString;
+}
+
+export function newExample(params) {
+    var abcString = generateNotes(params);
+    abcjs.renderAbc("target", abcString);
 }
