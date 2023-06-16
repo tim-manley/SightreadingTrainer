@@ -75,12 +75,9 @@ export function generateNotes(params) {
     for (let i = 1; i < numNotes; i++) {
         // Pick random index for interval value
         let index = Math.floor(Math.random() * intervals.length)
-        console.log(index)
         // 50/50 whether up or down
         let up = (Math.random() > 0.5) ? 1 : -1;
-        console.log(up)
         currentNum = currentNum + (up * intervals[index]);
-        console.log(currentNum)
         // While out of range, keep trying diff intervals
         while (currentNum > range[1] || currentNum < range[0]) {
             currentNum = currentNum - (up * intervals[index]);
@@ -90,10 +87,8 @@ export function generateNotes(params) {
             up = (Math.random() > 0.5) ? 1 : -1;
             currentNum = currentNum + (up * intervals[index]);
         }
-        console.log(currentNum);
         currentNote = numToNote[currentNum][Math.floor(Math.random() * numToNote[currentNum].length)];
         abcString = abcString + currentNote + "0 ";
     }
-    console.log(abcString);
     return abcString;
 }

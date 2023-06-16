@@ -25,7 +25,6 @@ function RandomGen() {
             "intervals": intervals,
             "range": range
         }
-        console.log(params);
         newExample(params);
     }
 
@@ -63,7 +62,6 @@ function RandomGen() {
                 <input type="number" name="numNotes" id="numNotes" onChange={(e) => setNumNotes(e.target.value)}/>
                 <p>Choose a clef:</p>
                 <input type="radio" name="clef" id="trebleClef" value="treble" onChange={(e) => {
-                    console.log(intervals);
                     setClef(e.target.value)
                     }}/>
                 <label htmlFor="trebleClef">Treble</label><br />
