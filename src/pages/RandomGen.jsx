@@ -36,13 +36,15 @@ function RandomGen() {
         "B"
     ]
 
-    const [intervals, setIntervals] = useState([]);
-    const [clef, setClef] = useState('');
-    const [numNotes, setNumNotes] = useState(0);
-    const [range, setRange] = useState([0, 0]); // Default is whole thing
-
     const rangeVals = Array.from(Array(49).keys()); // Numbers 0-48
     const intervalVals = Array.from(Array(13).keys()); // Numbers 0-12
+
+    const [params, setParams] = useState({
+        numNotes: 10,
+        clef: 'treble',
+        intervals: [],
+        range: [0, 0],
+    })
 
     const handlePitchDetect = () => {
         startPitchDetect();
@@ -50,17 +52,11 @@ function RandomGen() {
     }
 
     const handleNewExample = () => {
-        const params = {
-            "numNotes": numNotes,
-            "clef": clef,
-            "intervals": intervals,
-            "range": range
-        }
         newExample(params);
     }
 
     const handleIntervalsChange = (e) => {
-        let copyState = [...intervals];
+        let copyState = [...params.intervals];
         if (e.target.checked) {
             copyState.push(parseInt(e.target.value))
         } else {
@@ -69,11 +65,11 @@ function RandomGen() {
                 copyState.splice(index, 1)
             }
         }
-        setIntervals(copyState);
+        setParams({...params, intervals: copyState});
     }
 
     const handleRangeChange = (e) => {
-        let copyState = [...range];
+        let copyState = [...params.range];
         if (e.target.name === "fromRange") {
             copyState[0] = parseInt(e.target.value);
         } else if (e.target.name === "toRange") {
@@ -82,7 +78,7 @@ function RandomGen() {
             console.log("something went wrong");
             // TODO: Handle error...
         }
-        setRange(copyState);
+        setParams({...params, range: copyState});
     }
 
     return (
@@ -90,13 +86,11 @@ function RandomGen() {
             <div id="target"></div>
             <div id="options">
                 <p>Choose how many notes:</p>
-                <input type="number" name="numNotes" id="numNotes" onChange={(e) => setNumNotes(e.target.value)}/>
+                <input type="number" name="numNotes" id="numNotes" value="10" onChange={(e) => setParams({...params, numNotes: e.target.value})}/>
                 <p>Choose a clef:</p>
-                <input type="radio" name="clef" id="trebleClef" value="treble" onChange={(e) => {
-                    setClef(e.target.value)
-                    }}/>
+                <input type="radio" name="clef" id="trebleClef" value="treble" checked onChange={(e) => setParams({...params, clef: e.target.value})}/>
                 <label htmlFor="trebleClef">Treble</label><br />
-                <input type="radio" name="clef" id="bassClef" value="bass" onChange={(e) => setClef(e.target.value)}/>
+                <input type="radio" name="clef" id="bassClef" value="bass" onChange={(e) => setParams({...params, clef: e.target.value})}/>
                 <label htmlFor="bassClef">Bass</label>
                 <p>Select intervals to be included:</p>
                 {intervalVals.map(num => (

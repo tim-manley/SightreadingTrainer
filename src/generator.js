@@ -58,12 +58,20 @@ const numToNote = [
 // Creates a sequence of arhythmic notes
 export function generateNotes(params) {
     // Parse params
-    const numNotes = params["numNotes"];
-    const clef = params["clef"];
-    const intervals = params["intervals"];
-    const range = params["range"];
+    const numNotes = params.numNotes;
+    const clef = params.clef;
+    const intervals = params.intervals;
+    const range = params.range;
 
     //TODO: Input validation
+    // Check numNotes > 0
+    if (numNotes <= 0) {
+        throw new Error("Number of notes cannot be zero")
+    }
+    // Check at least one interval chosen
+    if (intervals.length <= 0) {
+        throw new Error("Must select at least one interval")
+    }
     // Check range is in valid order
     if (range[1] < range[0]) {
         throw new RangeError("Invalid range chosen");
