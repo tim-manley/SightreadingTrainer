@@ -6,8 +6,8 @@ import $ from "jquery"
 let currentNoteIndex;
 let currentNote;
 
-export function newExample(numNotes, clef, intervals, range) {
-    var abcString = generateNotes(numNotes, clef, intervals, range);
+export function newExample(params) {
+    var abcString = generateNotes(params);
     abcjs.renderAbc("target", abcString);
     // Color the first note blue
     highlightNote(0, 'red');

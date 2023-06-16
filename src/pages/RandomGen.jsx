@@ -19,8 +19,14 @@ function RandomGen() {
     }
 
     const handleNewExample = () => {
-        console.log(numNotes, clef, intervals, range);
-        newExample(numNotes, clef, intervals, range);
+        const params = {
+            "numNotes": numNotes,
+            "clef": clef,
+            "intervals": intervals,
+            "range": range
+        }
+        console.log(params);
+        newExample(params);
     }
 
     const handleIntervalsChange = (e) => {

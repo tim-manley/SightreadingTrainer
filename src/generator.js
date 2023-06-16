@@ -56,7 +56,15 @@ const numToNote = {
 };
 
 // Creates a sequence of arhythmic notes
-export function generateNotes(numNotes, clef, intervals, range) {
+export function generateNotes(params) {
+    // Parse params
+    const numNotes = params["numNotes"];
+    const clef = params["clef"];
+    const intervals = params["intervals"];
+    const range = params["range"];
+
+    //TODO: Input validation
+
     let abcString = `X:1\nT:Random Notes\nK:C clef=${clef}\n`
     if (numNotes === 0) return abcString;
     // Pick random starting note (num in range)
