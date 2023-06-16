@@ -3,57 +3,57 @@
 // Each note from lowest possible to highest possible is given a number, and mapped to its abcjs values
 // For flat keys to be diatonic, take second enharmonic value, first for sharp
 // TODO: Figure out C-major lol
-const numToNote = {
-    1: ["=C,,"],
-    2: ["^C,,", "_D,,"],
-    3: ["=D,,"],
-    4: ["^D,,", "_E,,"],
-    5: ["=E,,", "_F,,"],
-    6: ["^E,,", "=F,,"],
-    7: ["^F,,", "_G,,"],
-    8: ["=G,,"],
-    9: ["^G,,", "_A,,"],
-    10: ["=A,,"],
-    11: ["^A,,", "_B,,"],
-    12: ["=B,,", "_C,"],
-    13: ["^B,,", "=C,"],
-    14: ["^C,", "_D,"],
-    15: ["=D,"],
-    16: ["^D,", "_E,"],
-    17: ["=E,", "_F,"],
-    18: ["^E,", "=F,"],
-    19: ["^F,", "_G,"],
-    20: ["=G,"],
-    21: ["^G,", "_A,"],
-    22: ["=A,"],
-    23: ["^A,", "_B,"],
-    24: ["=B,", "_C"],
-    25: ["^B", "=C"],
-    26: ["^C", "_D"],
-    27: ["=D"],
-    28: ["^D", "_E"],
-    29: ["=E", "_F"],
-    30: ["^E", "=F"],
-    31: ["^F", "_G"],
-    32: ["=G"],
-    33: ["^G", "_A"],
-    34: ["=A"],
-    35: ["^A", "_B"],
-    36: ["=B", "_c"],
-    37: ["^B", "=c"],
-    38: ["^c", "_d"],
-    39: ["=d"],
-    40: ["^d", "_e"],
-    41: ["=e", "_f"],
-    42: ["^e", "=f"],
-    43: ["^f", "_g"],
-    44: ["=g"],
-    45: ["^g", "_a"],
-    46: ["=a"],
-    47: ["^a", "_b"],
-    48: ["=b", "_c'"],
-    49: ["^b", "=c'"]
-};
+const numToNote = [
+    ["=C,,"],
+    ["^C,,", "_D,,"],
+    ["=D,,"],
+    ["^D,,", "_E,,"],
+    ["=E,,", "_F,,"],
+    ["^E,,", "=F,,"],
+    ["^F,,", "_G,,"],
+    ["=G,,"],
+    ["^G,,", "_A,,"],
+    ["=A,,"],
+    ["^A,,", "_B,,"],
+    ["=B,,", "_C,"],
+    ["^B,,", "=C,"],
+    ["^C,", "_D,"],
+    ["=D,"],
+    ["^D,", "_E,"],
+    ["=E,", "_F,"],
+    ["^E,", "=F,"],
+    ["^F,", "_G,"],
+    ["=G,"],
+    ["^G,", "_A,"],
+    ["=A,"],
+    ["^A,", "_B,"],
+    ["=B,", "_C"],
+    ["^B", "=C"],
+    ["^C", "_D"],
+    ["=D"],
+    ["^D", "_E"],
+    ["=E", "_F"],
+    ["^E", "=F"],
+    ["^F", "_G"],
+    ["=G"],
+    ["^G", "_A"],
+    ["=A"],
+    ["^A", "_B"],
+    ["=B", "_c"],
+    ["^B", "=c"],
+    ["^c", "_d"],
+    ["=d"],
+    ["^d", "_e"],
+    ["=e", "_f"],
+    ["^e", "=f"],
+    ["^f", "_g"],
+    ["=g"],
+    ["^g", "_a"],
+    ["=a"],
+    ["^a", "_b"],
+    ["=b", "_c'"],
+    ["^b", "=c'"]
+];
 
 // Creates a sequence of arhythmic notes
 export function generateNotes(params) {
@@ -64,6 +64,16 @@ export function generateNotes(params) {
     const range = params["range"];
 
     //TODO: Input validation
+    // Check range is in valid order
+    if (range[1] < range[0]) {
+        throw new RangeError("Invalid range chosen");
+    }
+    // Check every interval is smaller than the range
+    for (let j = 0; j < intervals.length; j++) {
+        if (intervals[j] > (range[1] - range[0])) {
+            throw new RangeError("One or more supplied intervals is too large for the supplied range");
+        }
+    }
 
     let abcString = `X:1\nT:Random Notes\nK:C clef=${clef}\n`
     if (numNotes === 0) return abcString;

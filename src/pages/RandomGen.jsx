@@ -5,12 +5,43 @@ import { newExample, checker } from '../checker'
 
 function RandomGen() {
 
+    const intervalNames = [
+        "Unison",
+        "Half-step",
+        "Whole-step",
+        "Minor third",
+        "Major third",
+        "Perfect fourth",
+        "Tritone",
+        "Perfect fifth",
+        "Minor sixth",
+        "Major sixth",
+        "Minor seventh",
+        "Major seventh",
+        "Octave"
+    ]
+
+    const noteLabels = [
+        "C",
+        "C#/Db",
+        "D",
+        "D#/Eb",
+        "E",
+        "F",
+        "F#/Gb",
+        "G",
+        "G#/Ab",
+        "A",
+        "A#/Bb",
+        "B"
+    ]
+
     const [intervals, setIntervals] = useState([]);
     const [clef, setClef] = useState('');
     const [numNotes, setNumNotes] = useState(0);
-    const [range, setRange] = useState([1, 49]); // Default is whole thing
+    const [range, setRange] = useState([0, 0]); // Default is whole thing
 
-    const rangeVals = Array.from({length: 49}, (_, i) => i + 1); // Numbers 1-49
+    const rangeVals = Array.from(Array(49).keys()); // Numbers 0-48
     const intervalVals = Array.from(Array(13).keys()); // Numbers 0-12
 
     const handlePitchDetect = () => {
@@ -69,25 +100,26 @@ function RandomGen() {
                 <label htmlFor="bassClef">Bass</label>
                 <p>Select intervals to be included:</p>
                 {intervalVals.map(num => (
-                    <div>
-                        <input type="checkbox" name='intervals' id={num} value={num} onChange={(e) => handleIntervalsChange(e)}/>
-                        <label htmlFor={num}>{num}</label>
+                    <div key={intervalNames[num]}>
+                        <input type="checkbox" name='intervals' id={intervalNames[num]} value={num} onChange={(e) => handleIntervalsChange(e)}/>
+                        <label htmlFor={intervalNames[num]}>{intervalNames[num]}</label>
                     </div>
                 ))}
-                <button id="newExample" onClick={handleNewExample}>Generate new example</button>
-                <button id="pitchDetect" onClick={handlePitchDetect}>Start pitch analysis</button><br />
 
                 <select name="fromRange" id="fromRange" onChange={(e) => handleRangeChange(e)}>
                     {rangeVals.map(num => (
-                        <option key={num} value={num}>{num}</option>
+                        <option key={num} value={num}>{noteLabels[num % 12] + (Math.floor(num/12) + 2).toString()}</option>
                     ))}
                 </select>
                 <select name="toRange" id="toRange" onChange={(e) => handleRangeChange(e)}>
                     {rangeVals.map(num => (
-                        <option key={num} value={num}>{num}</option>
+                        <option key={num} value={num}>{noteLabels[num % 12] + (Math.floor(num/12) + 2).toString()}</option>
                     ))}
                 </select>
             </div>
+
+            <button id="newExample" onClick={handleNewExample}>Generate new example</button>
+            <button id="pitchDetect" onClick={handlePitchDetect}>Start pitch analysis</button><br />
             
 
             <div id="detector" className="vague">
