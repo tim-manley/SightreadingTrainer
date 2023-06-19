@@ -3,6 +3,7 @@ import '../detector.css'
 import { startPitchDetect } from '../pitchdetect'
 import { checker } from '../checker'
 import { newExample } from '../generator'
+import { rangeVals, noteNumToLabel } from '../util'
 
 function RandomGen() {
 
@@ -22,22 +23,7 @@ function RandomGen() {
         "Octave"
     ]
 
-    const noteLabels = [
-        "C",
-        "C#/Db",
-        "D",
-        "D#/Eb",
-        "E",
-        "F",
-        "F#/Gb",
-        "G",
-        "G#/Ab",
-        "A",
-        "A#/Bb",
-        "B"
-    ]
-
-    const rangeVals = Array.from(Array(49).keys()); // Numbers 0-48
+    
     const intervalVals = Array.from(Array(13).keys()); // Numbers 0-12
 
     const [params, setParams] = useState({
@@ -85,9 +71,9 @@ function RandomGen() {
                 <p>Choose how many notes:</p>
                 <input type="number" name="numNotes" id="numNotes" value="10" onChange={(e) => setParams({...params, numNotes: e.target.value})}/>
                 <p>Choose a clef:</p>
-                <input type="radio" name="clef" id="trebleClef" value="treble" checked onChange={(e) => setParams({...params, clef: e.target.value})}/>
+                <input type="radio" name="clef" id="trebleClef" value="treble" checked={params.clef==='treble'} onChange={(e) => setParams({...params, clef: e.target.value})}/>
                 <label htmlFor="trebleClef">Treble</label><br />
-                <input type="radio" name="clef" id="bassClef" value="bass" onChange={(e) => setParams({...params, clef: e.target.value})}/>
+                <input type="radio" name="clef" id="bassClef" value="bass" checked={params.clef==='bass'} onChange={(e) => setParams({...params, clef: e.target.value})}/>
                 <label htmlFor="bassClef">Bass</label>
                 <p>Select intervals to be included:</p>
                 {intervalVals.map(num => (
@@ -99,12 +85,12 @@ function RandomGen() {
 
                 <select name="fromRange" id="fromRange" onChange={(e) => handleRangeChange(e)}>
                     {rangeVals.map(num => (
-                        <option key={num} value={num}>{noteLabels[num % 12] + (Math.floor(num/12) + 2).toString()}</option>
+                        <option key={num} value={num}>{noteNumToLabel(num)}</option>
                     ))}
                 </select>
                 <select name="toRange" id="toRange" onChange={(e) => handleRangeChange(e)}>
                     {rangeVals.map(num => (
-                        <option key={num} value={num}>{noteLabels[num % 12] + (Math.floor(num/12) + 2).toString()}</option>
+                        <option key={num} value={num}>{noteNumToLabel(num)}</option>
                     ))}
                 </select>
             </div>

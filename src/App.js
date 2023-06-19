@@ -8,6 +8,7 @@ import HomePage from './pages/Home';
 import RandomGen from "./pages/RandomGen";
 import { auth } from './firebase.js';
 import { useIdToken, useSignOut } from "react-firebase-hooks/auth";
+import SetupUser from "./pages/SetupUser.jsx";
 
 function App() {
   const [user, loading, error] = useIdToken(auth);
@@ -24,20 +25,21 @@ function App() {
   if (error || errorSO) {
     content =
       <div>
-        <p>Error: {error.message}</p>;
+        <p>Error: {error ? error.message : errorSO.message}</p>;
       </div>;
   }
 
   return (
     <BrowserRouter>
       <Navbar user={user} signOutFunc={() => signOut()}/>
-      {(loading || error || loadingSO || errorSO) ? content : 
+      {(loading || error || loadingSO || errorSO) ? content : // Show loading/error if loading/error, otherwise use router
         <Routes>
           <Route exact path="/" element={<LandingPage />} />
           <Route exact path="/login" element={user ? <Navigate to="/home" /> : <LoginPage />}/>
           <Route exact path="/home" element={user ? <HomePage /> : <Navigate to="/login"/>}/>
           <Route exact path="/signup" element={user ? <Navigate to="/home" /> : <SignUp />} />
           <Route exact path="/random" element={user ? <RandomGen /> : <Navigate to="/login"/>} />
+          <Route exact path="/setup" element={user ? <SetupUser uid={user.uid} /> : <Navigate to="/login" />} />
         </Routes>
       }
     </BrowserRouter>
