@@ -1,11 +1,16 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import '../detector.css'
 import { startPitchDetect } from '../pitchdetect'
 import { checker } from '../checker'
 import { newExample } from '../generator'
 import { rangeVals, noteNumToLabel } from '../util'
+import { useDocumentOnce } from 'react-firebase-hooks/firestore'
+import { db } from '../firebase'
+import { doc } from 'firebase/firestore'
 
-function RandomGen() {
+function RandomGen(props) {
+
+    const [userDoc, loading, error] = useDocumentOnce(doc(db, "users", props.user.uid))
 
     const intervalNames = [
         "Unison",
@@ -23,7 +28,6 @@ function RandomGen() {
         "Octave"
     ]
 
-    
     const intervalVals = Array.from(Array(13).keys()); // Numbers 0-12
 
     const [params, setParams] = useState({
@@ -64,6 +68,20 @@ function RandomGen() {
         setParams({...params, range: copyState});
     }
 
+    useEffect(() => {
+        console.log("user doc changed")
+        if (userDoc) {
+            console.log("userDoc exists")
+            setParams({...params, range: [userDoc.data().range[0], userDoc.data().range[1]]})
+        }
+    }, [userDoc])
+
+    if (loading) {
+        return <div>Loading...</div>
+    } else if (error) {
+        return <div>Error: {error.message}</div>
+    }
+
     return (
         <div>
             <div id="target"></div>
@@ -82,8 +100,8 @@ function RandomGen() {
                         <label htmlFor={intervalNames[num]}>{intervalNames[num]}</label>
                     </div>
                 ))}
-
-                <select name="fromRange" id="fromRange" onChange={(e) => handleRangeChange(e)}>
+                
+                {/*<select name="fromRange" id="fromRange" onChange={(e) => handleRangeChange(e)}>
                     {rangeVals.map(num => (
                         <option key={num} value={num}>{noteNumToLabel(num)}</option>
                     ))}
@@ -92,7 +110,7 @@ function RandomGen() {
                     {rangeVals.map(num => (
                         <option key={num} value={num}>{noteNumToLabel(num)}</option>
                     ))}
-                </select>
+                    </select>*/}
             </div>
 
             <button id="newExample" onClick={handleNewExample}>Generate new example</button>

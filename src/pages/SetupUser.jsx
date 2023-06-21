@@ -6,7 +6,7 @@ import { rangeVals, noteNumToLabel } from '../util.js';
 
 function SetupUser(props) {
 
-  const [userDoc, loading, error, reload] = useDocumentOnce(doc(db, "users", props.uid));
+  const [userDoc, loading, error] = useDocumentOnce(doc(db, "users", props.user.uid));
 
     const [user, setUser] = useState({
       range: [0, 48],
@@ -18,7 +18,7 @@ function SetupUser(props) {
 
     async function updateUser() {
       try {
-        let docRef = await setDoc(doc(db, "users", props.uid), user);
+        let docRef = await setDoc(doc(db, "users", props.user.uid), user);
         console.log("success!", docRef);
       } catch (error) {
         console.log(error);
@@ -55,13 +55,19 @@ function SetupUser(props) {
       {userDoc &&
         <form>
           <label htmlFor="fromRange">Lowest note</label><br />
-          <select name="fromRange" id="fromRange" value={user.range[0]} onChange={(e) => setUser({...user, range: [e.target.value, user.range[1]]})}>
+          <select name="fromRange" id="fromRange" value={user.range[0]} onChange={(e) => setUser({
+            ...user,
+            range: [parseInt(e.target.value), parseInt(user.range[1])]
+            })}>
               {rangeVals.map(num => (
                   <option key={num} value={num}>{noteNumToLabel(num)}</option>
               ))}
           </select><br />
           <label htmlFor="toRange">Highest note</label><br />
-          <select name="toRange" id="toRange" value={user.range[1]} onChange={(e) => setUser({...user, range: [user.range[0], e.target.value]})}>
+          <select name="toRange" id="toRange" value={user.range[1]} onChange={(e) => setUser({
+            ...user,
+            range: [parseInt(user.range[0]), parseInt(e.target.value)]
+            })}>
               {rangeVals.map(num => (
                   <option key={num} value={num}>{noteNumToLabel(num)}</option>
               ))}

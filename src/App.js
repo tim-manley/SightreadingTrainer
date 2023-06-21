@@ -38,8 +38,8 @@ function App() {
           <Route exact path="/login" element={user ? <Navigate to="/home" /> : <LoginPage />}/>
           <Route exact path="/home" element={user ? <HomePage /> : <Navigate to="/login"/>}/>
           <Route exact path="/signup" element={user ? <Navigate to="/home" /> : <SignUp />} />
-          <Route exact path="/random" element={user ? <RandomGen /> : <Navigate to="/login"/>} />
-          <Route exact path="/setup" element={user ? <SetupUser uid={user.uid} /> : <Navigate to="/login" />} />
+          <Route exact path="/random" element={user ? <RandomGen user={user} /> : <Navigate to="/login"/>} />
+          <Route exact path="/setup" element={user ? <SetupUser user={user} /> : <Navigate to="/login" />} />
         </Routes>
       }
     </BrowserRouter>
