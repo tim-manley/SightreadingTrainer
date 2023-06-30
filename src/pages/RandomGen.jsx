@@ -7,6 +7,7 @@ import { rangeVals, noteNumToLabel } from '../util'
 import { useDocumentOnce } from 'react-firebase-hooks/firestore'
 import { db } from '../firebase'
 import { doc } from 'firebase/firestore'
+import Notation from '../components/notation/Notation'
 
 function RandomGen(props) {
 
@@ -39,7 +40,6 @@ function RandomGen(props) {
 
     const handleNewExample = () => {
         newExample(params);
-        checker();
     }
 
     const handleIntervalsChange = (e) => {
@@ -69,9 +69,8 @@ function RandomGen(props) {
     }
 
     useEffect(() => {
-        console.log("user doc changed")
+        // Sets initial parameters once userDoc has loaded
         if (userDoc) {
-            console.log("userDoc exists")
             setParams({...params, range: [userDoc.data().range[0], userDoc.data().range[1]]})
         }
     }, [userDoc])
@@ -84,10 +83,11 @@ function RandomGen(props) {
 
     return (
         <div>
-            <div id="target"></div>
+            <Notation />
             <div id="options">
                 <p>Choose how many notes:</p>
-                <input type="number" name="numNotes" id="numNotes" value="10" onChange={(e) => setParams({...params, numNotes: e.target.value})}/>
+                <input type="number" name="numNotes" id="numNotes" value={params.numNotes} onChange={(e) => {
+                    setParams({...params, numNotes: parseInt(e.target.value)});}}/>
                 <p>Choose a clef:</p>
                 <input type="radio" name="clef" id="trebleClef" value="treble" checked={params.clef==='treble'} onChange={(e) => setParams({...params, clef: e.target.value})}/>
                 <label htmlFor="trebleClef">Treble</label><br />
@@ -100,21 +100,12 @@ function RandomGen(props) {
                         <label htmlFor={intervalNames[num]}>{intervalNames[num]}</label>
                     </div>
                 ))}
-                
-                {/*<select name="fromRange" id="fromRange" onChange={(e) => handleRangeChange(e)}>
-                    {rangeVals.map(num => (
-                        <option key={num} value={num}>{noteNumToLabel(num)}</option>
-                    ))}
-                </select>
-                <select name="toRange" id="toRange" onChange={(e) => handleRangeChange(e)}>
-                    {rangeVals.map(num => (
-                        <option key={num} value={num}>{noteNumToLabel(num)}</option>
-                    ))}
-                    </select>*/}
             </div>
 
             <button id="newExample" onClick={handleNewExample}>Generate new example</button>
-            <button id="pitchDetect" onClick={startPitchDetect}>Start pitch analysis</button><br />
+            <button id="pitchDetect" onClick={() => {
+                startPitchDetect();
+                checker(params.numNotes);}}>Start</button><br />
             
 
             <div id="detector" className="vague">

@@ -115,5 +115,5 @@ function generateNotes(params) {
 
 export function newExample(params) {
     var abcString = generateNotes(params);
-    abcjs.renderAbc("target", abcString);
+    abcjs.renderAbc("mainTarget", abcString, { add_classes: true });
 }

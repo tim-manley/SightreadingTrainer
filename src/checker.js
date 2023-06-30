@@ -4,12 +4,21 @@ import $ from "jquery"
 let currentNoteIndex;
 let currentNote;
 
-function getNoteTag(noteIndex) {
-    let noteWrapper = $("#target").find(`[data-index='${noteIndex}']`);
+function getNoteWrapper(noteIndex) {
+    const noteWrapper = $("#mainTarget").find(`[data-index='${noteIndex}']`);
     if (noteWrapper == null) { // Note out of range
         return null;
     }
-    let note = noteWrapper.children()[1]; // Need to be more specific than 1 in future
+    return noteWrapper;
+}
+
+// Extracts the abc note value
+function getNoteTag(noteIndex) {
+    const noteWrapper = getNoteWrapper(noteIndex);
+    if (noteWrapper == null) {
+        return null;
+    }
+    const note = noteWrapper.children()[1]; // Need to be more specific than 1 in future (doesn't take into acc no accidentals)
     return note;
 }
 
@@ -25,27 +34,33 @@ function getAbcNote(noteIndex) {
 }
 
 function highlightNote(noteIndex, color) {
-    let note = getNoteTag(noteIndex);
+    const noteWrapper = getNoteWrapper(noteIndex); // Extracts html element from wrapper
+    if (noteWrapper == null) {
+        return -1;
+    }
+    const note = noteWrapper[0];
     if (note == null) {
         return -1;
     }
-    note.style.color = color;
+    console.log(note);
+    note.setAttribute("fill", color);
     return 1;
 }
 
 function nextNote() {
     highlightNote(currentNoteIndex, 'green');
     currentNoteIndex++;
-    if (highlightNote(currentNoteIndex, 'red') === -1) {
+    // Check for end of line
+    if (highlightNote(currentNoteIndex, 'blue') === -1) { 
         return;
     };
     let abcNote = getAbcNote(currentNoteIndex);
     currentNote = abcNoteToNote(abcNote);
 }
 
-export function checker() {
+export function checker(numNotes) {
     // Color the first note blue
-    highlightNote(0, 'red');
+    highlightNote(0, 'blue');
     currentNoteIndex = 0;
     currentNote = abcNoteToNote(getAbcNote(currentNoteIndex));
 
@@ -56,9 +71,19 @@ export function checker() {
 
     // Private checker helper
     function checkCorrect() {
-        let playedNote = document.getElementById('note').innerHTML;
+        let playedNote = document.getElementById('note');
+        // Check if the element exists (prevents error when navigating away)
+        if (!playedNote) {
+            clearInterval(checkerInterval);
+            return;
+        }
+        let playedNoteText = playedNote.innerHTML;
+
+        if (currentNoteIndex >= numNotes) {
+            clearInterval(checkerInterval);
+        }
     
-        if (playedNote === currentNote) {
+        if (playedNoteText === currentNote) {
             elapsed += interval;
     
             if (elapsed >= timeThresh) {
@@ -71,5 +96,5 @@ export function checker() {
     }
 
     // Start listening and comparing to current note
-    setInterval(checkCorrect, interval);
+    const checkerInterval = setInterval(checkCorrect, interval);
 }
