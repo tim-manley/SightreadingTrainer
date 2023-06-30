@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react'
-import '../detector.css'
-import { startPitchDetect } from '../pitchdetect'
-import { checker } from '../checker'
-import { newExample } from '../generator'
-import { rangeVals, noteNumToLabel } from '../util'
+import './randomGen.css'
+import { startPitchDetect } from '../../pitchdetect'
+import { checker } from '../../checker'
+import { newExample } from '../../generator'
+import { rangeVals, noteNumToLabel } from '../../util'
 import { useDocumentOnce } from 'react-firebase-hooks/firestore'
-import { db } from '../firebase'
+import { db } from '../../firebase'
 import { doc } from 'firebase/firestore'
-import Notation from '../components/notation/Notation'
+import Notation from '../../components/notation/Notation'
+import Detector from '../../components/detector/Detector'
 
 function RandomGen(props) {
 
@@ -101,19 +102,15 @@ function RandomGen(props) {
                     </div>
                 ))}
             </div>
-
-            <button id="newExample" onClick={handleNewExample}>Generate new example</button>
-            <button id="pitchDetect" onClick={() => {
-                startPitchDetect();
-                checker(params.numNotes);}}>Start</button><br />
             
-
-            <div id="detector" className="vague">
-                <div className="pitch"><span id="pitch">--</span>Hz</div>
-                <div className="note"><span id="note">--</span></div>   
-                <canvas id="output" width="300" height="42"></canvas>
-                <div id="detune"><span id="detune_amt">--</span><span id="flat">cents &#9837;</span><span id="sharp">cents &#9839;</span></div>
+            <div id="buttons">
+                <button id="newExample" onClick={handleNewExample}>Generate new example</button>
+                <button id="pitchDetect" onClick={() => {
+                    startPitchDetect();
+                    checker(params.numNotes);}}>Start</button><br />
             </div>
+
+            <Detector />
         </div>
     )
 }

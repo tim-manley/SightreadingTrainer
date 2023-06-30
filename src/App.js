@@ -5,7 +5,7 @@ import LandingPage from './pages/Landing';
 import LoginPage from './pages/Login';
 import SignUp from "./pages/SignUp";
 import HomePage from './pages/Home';
-import RandomGen from "./pages/RandomGen";
+import RandomGen from "./pages/randomGen/RandomGen.jsx";
 import { auth } from './firebase.js';
 import { useIdToken, useSignOut } from "react-firebase-hooks/auth";
 import SetupUser from "./pages/SetupUser.jsx";

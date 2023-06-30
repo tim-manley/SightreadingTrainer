@@ -85,7 +85,7 @@ function generateNotes(params) {
         }
     }
 
-    let abcString = `X:1\nT:Random Notes\nK:C clef=${clef}\n`
+    let abcString = `X:1\nK:C clef=${clef}\n`
     if (numNotes === 0) return abcString;
     // Pick random starting note (num in range)
     let currentNum = Math.floor(Math.random() * (range[1] - range[0]) + range[0]);
@@ -114,6 +114,10 @@ function generateNotes(params) {
 }
 
 export function newExample(params) {
-    var abcString = generateNotes(params);
+    const abcString = generateNotes(params);
+    console.log(abcString);
+    // Render main example
     abcjs.renderAbc("mainTarget", abcString, { add_classes: true });
+    // Render overlay example (for live feedback)
+    abcjs.renderAbc("overlayTarget", abcString, { add_classes: true });
 }
