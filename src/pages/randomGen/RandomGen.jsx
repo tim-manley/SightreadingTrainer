@@ -3,7 +3,6 @@ import './randomGen.css'
 import { startPitchDetect } from '../../pitchdetect'
 import { checker } from '../../checker'
 import { newExample } from '../../generator'
-import { rangeVals, noteNumToLabel } from '../../util'
 import { useDocumentOnce } from 'react-firebase-hooks/firestore'
 import { db } from '../../firebase'
 import { doc } from 'firebase/firestore'
@@ -54,19 +53,6 @@ function RandomGen(props) {
             }
         }
         setParams({...params, intervals: copyState});
-    }
-
-    const handleRangeChange = (e) => {
-        let copyState = [...params.range];
-        if (e.target.name === "fromRange") {
-            copyState[0] = parseInt(e.target.value);
-        } else if (e.target.name === "toRange") {
-            copyState[1] = parseInt(e.target.value);
-        } else {
-            console.log("something went wrong");
-            // TODO: Handle error...
-        }
-        setParams({...params, range: copyState});
     }
 
     useEffect(() => {

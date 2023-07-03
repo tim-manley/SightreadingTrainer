@@ -117,7 +117,7 @@ export function newExample(params) {
     const abcString = generateNotes(params);
     console.log(abcString);
     // Render main example
-    abcjs.renderAbc("mainTarget", abcString, { add_classes: true });
+    abcjs.renderAbc("mainTarget", abcString, { add_classes: true});
     // Render overlay example (for live feedback)
-    abcjs.renderAbc("overlayTarget", abcString, { add_classes: true });
+    abcjs.renderAbc("overlayTarget", abcString, { add_classes: true});
 }
