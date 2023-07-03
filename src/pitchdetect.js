@@ -149,9 +149,7 @@ function updatePitch( time ) {
 		detuneAmount.innerText = "--";
  	} else {
 	 	var pitch = ac;
-		console.log(pitch)
 	 	var note =  noteFromPitch( pitch );
-		console.log(note);
 		// Check in reasonable singing range
 		if (note >= 0 && note <= 48) {
 			detectorElem.className = "confident";
