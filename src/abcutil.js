@@ -32,7 +32,7 @@
 import { noteNumToLabel } from "./util";
 
 function isLetter(str) {
-    return str.length === 1 && str.toLowerCase() != str.toUpperCase();
+    return str.length === 1 && str.toLowerCase() !== str.toUpperCase();
 }
 
 function isLower(str) {
