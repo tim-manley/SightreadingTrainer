@@ -8,7 +8,7 @@ function isLower(str) {
     return str === str.toLowerCase();
 }
 
-export function abcNoteToNote(abcNote) {
+export function abcNoteToNoteNum(abcNote) {
     let noteLetterIndex = -1;
     for (let i = 0; i < abcNote.length; i++) {
         if (isLetter(abcNote.charAt(i))) {
@@ -30,6 +30,8 @@ export function abcNoteToNote(abcNote) {
     }
     // Need to map to a number between 0-48
     // Start at note shift value
+    console.log("Abc note: ", abcNote);
+    console.log("Char at: ", abcNote.charAt(noteLetterIndex));
     let noteNum = shiftMap[abcNote.charAt(noteLetterIndex).toUpperCase()];
     // Shift based on accidental
     if (noteLetterIndex > 0 && abcNote.charAt(noteLetterIndex - 1) === "_") {
@@ -45,16 +47,21 @@ export function abcNoteToNote(abcNote) {
             noteNum += 12;
         }
     } else {
-        // If there's a character after note letter
-        if (abcNote.length > noteLetterIndex + 1) {
+        if (abcNote.length > noteLetterIndex + 2 && abcNote.charAt(noteLetterIndex + 1) === "," && abcNote.charAt(noteLetterIndex + 1) === ",") {
+            noteNum += 0; // 2 commas
+        } else if (abcNote.length > noteLetterIndex + 1 && abcNote.charAt(noteLetterIndex + 1) === ",") {
             // If there's 1 comma then we add 12
-            if (abcNote.length === noteLetterIndex + 2 && abcNote.charAt(noteLetterIndex + 1) === ",") {
-                noteNum += 12;
-            }
-            // If there's 2 commas we don't add anything
+            noteNum += 12;
         } else {
-            noteNum += 24; // No comma means higher
+            // Otherwise it's not lowered
+            noteNum += 24;
         }
     }
+    console.log("Note num calculated: ", noteNum);
+    return noteNum;
+}
+
+export function abcNoteToNoteLabel(abcNote) {
+    const noteNum = abcNoteToNoteNum(abcNote);
     return noteNumToLabel(noteNum);
 }

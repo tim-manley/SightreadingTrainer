@@ -14,5 +14,8 @@
 
 .overlayTarget {
     z-index: 10;
-    opacity: 50%;
+}
+
+.mainTarget {
+    opacity: 0%;
 }

@@ -5,7 +5,7 @@ import abcjs from 'abcjs'
 // Each note from lowest possible to highest possible is given a number, and mapped to its abcjs values
 // For flat keys to be diatonic, take second enharmonic value, first for sharp
 // TODO: Figure out C-major lol
-const numToNote = [
+export const numToNote = [
     ["=C,,"],
     ["^C,,", "_D,,"],
     ["=D,,"],
@@ -113,11 +113,37 @@ function generateNotes(params) {
     return abcString;
 }
 
+let globalOverlayAbcString = "";
+
 export function newExample(params) {
     const abcString = generateNotes(params);
+    globalOverlayAbcString = abcString;
     console.log(abcString);
     // Render main example
-    abcjs.renderAbc("mainTarget", abcString, { add_classes: true});
+    abcjs.renderAbc("mainTarget", abcString, { add_classes: true });
     // Render overlay example (for live feedback)
-    abcjs.renderAbc("overlayTarget", abcString, { add_classes: true});
+    abcjs.renderAbc("overlayTarget", abcString, { add_classes: true });
+}
+
+export function reRenderOverlay(noteIndex, newNoteNum) {
+    const abcLines = globalOverlayAbcString.split("\n");
+    const notesLine = abcLines[abcLines.length - 1];
+    const notes = notesLine.split(" ");
+    notes[noteIndex] = "[" + notes[noteIndex] + numToNote[newNoteNum][0] + "0" + "]"; // always the "flatter" option for now, need to change in future to deal w keys
+    let newAbcString = "";
+    for (let i = 0; i < abcLines.length; i++) {
+        if (i < abcLines.length - 1) {
+            newAbcString += abcLines[i] + "\n";
+        } else {
+            for (let j = 0; j < notes.length; j++) {
+                if (j < notes.length - 1) {
+                    newAbcString += notes[j] + " ";
+                } else {
+                    newAbcString += notes[j];
+                }
+            }
+        }
+    }
+    globalOverlayAbcString = newAbcString;
+    abcjs.renderAbc("overlayTarget", newAbcString, { add_classes: true })
 }

@@ -154,7 +154,7 @@ function updatePitch( time ) {
 		if (note >= 0 && note <= 48) {
 			detectorElem.className = "confident";
 			pitchElem.innerText = Math.round( pitch ) ;
-			noteElem.innerHTML = noteNumToLabel(note);
+			noteElem.innerHTML = note;
 			//noteElem.innerHTML = noteStrings[note%12];
 			var detune = centsOffFromPitch( pitch, note );
 			if (Math.abs(detune) < 15) { // If within 15 cents, then say in tune

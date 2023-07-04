@@ -1,25 +1,27 @@
-import { abcNoteToNote } from "./abcutil";
-import $ from "jquery"
+import { faSpaghettiMonsterFlying } from "@fortawesome/free-solid-svg-icons";
+import { abcNoteToNoteLabel, abcNoteToNoteNum } from "./abcutil";
+import { reRenderOverlay } from "./generator";
+
+let noteCount;
 
 let currentNoteIndex;
-let currentNote;
+let currentNoteNum;
 
-function getNoteWrapper(noteIndex) {
-    const noteWrapper = $("#mainTarget").find(`[data-index='${noteIndex}']`);
-    if (noteWrapper == null) { // Note out of range
-        return null;
-    }
-    return noteWrapper;
-}
+let refNotes;
+let overlayNotes;
 
 // Extracts the abc note value
 function getNoteTag(noteIndex) {
-    const noteWrapper = getNoteWrapper(noteIndex);
+    const noteWrapper = refNotes[noteIndex];
     if (noteWrapper == null) {
         return null;
     }
-    const note = noteWrapper.children()[1]; // Need to be more specific than 1 in future (doesn't take into acc no accidentals)
-    return note;
+    const noteWrapperChildren = noteWrapper.childNodes;
+    if (noteWrapperChildren[0].getAttribute("data-name").includes("accidental")) {
+        return noteWrapperChildren[1];
+    } else {
+        return noteWrapperChildren[0]
+    }
 }
 
 function getAbcNote(noteIndex) {
@@ -34,67 +36,99 @@ function getAbcNote(noteIndex) {
 }
 
 function highlightNote(noteIndex, color) {
-    const noteWrapper = getNoteWrapper(noteIndex); // Extracts html element from wrapper
-    if (noteWrapper == null) {
-        return -1;
-    }
-    const note = noteWrapper[0];
+    let note = overlayNotes[noteIndex];
     if (note == null) {
-        return -1;
+        return null;
     }
-    console.log(note);
     note.setAttribute("fill", color);
+    note.setAttribute("opacity", "1");
     return 1;
 }
 
 function nextNote() {
-    highlightNote(currentNoteIndex, 'green');
     currentNoteIndex++;
     // Check for end of line
-    if (highlightNote(currentNoteIndex, 'blue') === -1) { 
+    if (currentNoteIndex >= noteCount) { 
         return;
     };
     let abcNote = getAbcNote(currentNoteIndex);
-    currentNote = abcNoteToNote(abcNote);
+    currentNoteNum = abcNoteToNoteNum(abcNote);
 }
 
 export function checker(numNotes) {
+
+    noteCount = numNotes;
+    let correctArray = new Array(noteCount).fill(0);
+
+    refNotes = document.getElementById("mainTarget").querySelectorAll(".abcjs-note");
+    overlayNotes = document.getElementById("overlayTarget").querySelectorAll(".abcjs-note");
+
     // Color the first note blue
     highlightNote(0, 'blue');
     currentNoteIndex = 0;
-    currentNote = abcNoteToNote(getAbcNote(currentNoteIndex));
+    currentNoteNum = abcNoteToNoteNum(getAbcNote(currentNoteIndex));
 
     // Set checking params
-    const timeThresh = 600;
+    const timeThresh = 600; // Thresh will be dependent on rhythm
     const interval = 100;
     let elapsed = 0;
+    let currentPlayedNoteNum = -1;
 
     // Private checker helper
     function checkCorrect() {
-        let playedNote = document.getElementById('note');
+        let playedNoteEl = document.getElementById('note');
         // Check if the element exists (prevents error when navigating away)
-        if (!playedNote) {
+        if (!playedNoteEl) {
             clearInterval(checkerInterval);
             return;
         }
-        let playedNoteText = playedNote.innerHTML;
+        let playedNoteNum = parseInt(playedNoteEl.innerHTML);
+        console.log("Played num: ", playedNoteNum);
 
+        // If past last note, clear the checker interval
         if (currentNoteIndex >= numNotes) {
             clearInterval(checkerInterval);
         }
     
-        if (playedNoteText === currentNote) {
-            elapsed += interval;
-    
-            if (elapsed >= timeThresh) {
-                nextNote();
+        // If the played note is the same as before (i.e. not changing note)
+        if (playedNoteNum === currentPlayedNoteNum) {
+            elapsed += interval; // Add to elapsed time singing the note
+            if (elapsed >= timeThresh) { // If sung for long enough, check if note is correct
+                console.log("threshold reached");
+                if (playedNoteNum === currentNoteNum) {
+                    correctArray[currentNoteIndex] = 1;
+                    highlightNote(currentNoteIndex, "green")
+                    nextNote();
+                    highlightNote(currentNoteIndex, "blue")
+                } else {
+                    // Set wrong in correctArray
+                    correctArray[currentNoteIndex] = -1;
+                    // Move overlay note to the note that's being sung
+                    reRenderOverlay(currentNoteIndex, playedNoteNum);
+                    // Refind overlay notes
+                    overlayNotes = document.getElementById("overlayTarget").querySelectorAll(".abcjs-note");
+                    // Recolor notes up to and including current
+                    for (let i = 0; i <= currentNoteIndex; i++) {
+                        if (correctArray[i] === 1) {
+                            highlightNote(i, "green");
+                        } else if (correctArray[i] === -1) {
+                            highlightNote(i, "red");
+                        }
+                    }
+                    // Next note
+                    nextNote();
+                    highlightNote(currentNoteIndex, "blue");
+                }
+                clearInterval(checkerInterval);
+                setTimeout(() => {checkerInterval = setInterval(checkCorrect, interval)}, 600); // Only for arhythmic things
                 elapsed = 0;
             }
         } else {
             elapsed = 0;
+            currentPlayedNoteNum = playedNoteNum;
         }
     }
 
     // Start listening and comparing to current note
-    const checkerInterval = setInterval(checkCorrect, interval);
+    let checkerInterval = setInterval(checkCorrect, interval);
 }

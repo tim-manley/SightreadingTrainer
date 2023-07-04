@@ -10,11 +10,21 @@
 }
 
 .navLeft {
-    flex: 25%
+    flex: 25%;
 }
+
+.logo {
+    display: flex;
+    justify-content: left;
+}
+
 .navRight {
     flex: 25%;
+}
+
+.signOut {
     display: flex;
+    justify-content: right;
 }
 
 .navCenter {

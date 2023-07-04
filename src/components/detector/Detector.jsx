@@ -3,7 +3,7 @@ import './detector.css'
 
 function Detector() {
   return (
-    <div id="detector" className="vague">
+    <div id="detector" className="vague" style={{display: 'none'}}>
         <div className="pitch"><span id="pitch">--</span>Hz</div>
         <div className="note"><span id="note">--</span></div>   
         <canvas id="output" width="300" height="42"></canvas>
