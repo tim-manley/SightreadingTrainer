@@ -29,7 +29,7 @@ function LoginPage() {
       if (user) {
         console.log(user.email);
         return (
-          <Navigate to="/protected" />
+          <Navigate to="/home" />
         );
       }
 

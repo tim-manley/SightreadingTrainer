@@ -6,3 +6,12 @@
     font-family: Garcia;
     src: url("fonts/GARCIA-Regular.otf") format("opentype");
 }
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    height: 100vh;
+    overflow: hidden;
+}

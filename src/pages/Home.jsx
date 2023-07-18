@@ -2,6 +2,8 @@ import React from "react";
 import { auth } from '../firebase';
 import { useSignOut } from "react-firebase-hooks/auth";
 import { useIdToken } from "react-firebase-hooks/auth";
+import { Link } from "react-router-dom";
+import Navbar from "../components/Navbar";
 
 function HomePage() {
 
@@ -36,9 +38,11 @@ function HomePage() {
     }
     
     return (
-        <div>
+        <>
+            <Navbar />
             <h1>Protected page!</h1>
             <p>Email is: {user.email}</p>
+            <Link to="/random">Random Gen</Link>
             <button onClick={async () => {
                 const success = await signOut();
                 if (success) {
@@ -47,7 +51,7 @@ function HomePage() {
             }}>
                 Sign Out
             </button>
-        </div>
+        </>
     );
 };
 

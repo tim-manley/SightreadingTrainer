@@ -7,12 +7,11 @@ let noteCount;
 let currentNoteIndex;
 let currentNoteNum;
 
-let refNotes;
 let overlayNotes;
 
 // Extracts the abc note value
 function getNoteTag(noteIndex) {
-    const noteWrapper = refNotes[noteIndex];
+    const noteWrapper = overlayNotes[noteIndex];
     if (noteWrapper == null) {
         return null;
     }
@@ -60,7 +59,6 @@ export function checker(numNotes) {
     noteCount = numNotes;
     let correctArray = new Array(noteCount).fill(0);
 
-    refNotes = document.getElementById("mainTarget").querySelectorAll(".abcjs-note");
     overlayNotes = document.getElementById("overlayTarget").querySelectorAll(".abcjs-note");
 
     // Color the first note blue
