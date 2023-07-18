@@ -1,5 +1,5 @@
-import { React, useEffect, useInsertionEffect, useMemo, useState } from 'react'
-import { doc, setDoc, getDoc } from "firebase/firestore";
+import { React, useEffect, useState } from 'react'
+import { doc } from "firebase/firestore";
 import { db } from "../firebase.js"
 import { useDocumentOnce } from "react-firebase-hooks/firestore"
 

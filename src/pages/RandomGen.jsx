@@ -59,7 +59,7 @@ function RandomGen(props) {
         if (userDoc) {
             setParams({...params, range: [userDoc.data().range[0], userDoc.data().range[1]]})
         }
-    }, [userDoc])
+    }, [userDoc, params])
 
     if (loading) {
         return <div>Loading...</div>

@@ -1,5 +1,4 @@
-import { faSpaghettiMonsterFlying } from "@fortawesome/free-solid-svg-icons";
-import { abcNoteToNoteLabel, abcNoteToNoteNum } from "./abcutil";
+import { abcNoteToNoteNum } from "./abcutil";
 import { reRenderOverlay } from "./generator";
 
 let noteCount;

@@ -127,7 +127,7 @@ export function reRenderOverlay(noteIndex, newNoteNum) {
     const abcLines = globalOverlayAbcString.split("\n");
     const notesLine = abcLines[abcLines.length - 1];
     const notes = notesLine.split(" ");
-    notes[noteIndex] = "[" + notes[noteIndex] + numToNote[newNoteNum][0] + "0" + "]"; // always the "flatter" option for now, need to change in future to deal w keys
+    notes[noteIndex] = "[" + notes[noteIndex] + numToNote[newNoteNum][0] + "0]"; // always the "flatter" option for now, need to change in future to deal w keys
     let newAbcString = "";
     for (let i = 0; i < abcLines.length; i++) {
         if (i < abcLines.length - 1) {

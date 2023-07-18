@@ -45,7 +45,7 @@ function LandingPage() {
         <div id="" className='h-screen flex flex-nowrap' style={{width: '200%'}}>
             <div className='mt-24 ml-2.5 flex flex-col' style={{width: '60%'}}>
                 <div className='ml-2.5'>
-                    <img src={logo} style={{width: '805px', height: '241px'}} />
+                    <img src={logo} alt='onsight logo' style={{width: '805px', height: '241px'}} />
                 </div>
                 <div className='ml-12 mt-7' style={{width: '720px'}}>
                     <p className='text-black/60 text-2xl leading-10 font-primary font-normal'>
@@ -59,17 +59,17 @@ function LandingPage() {
                     <a href="#login">
                         <p className='text-primary font-primary font-normal text-6xl'>
                             Let's get started
-                            <img className='h-12 w-12 ml-4 inline' src={arrow} />
+                            <img className='h-12 w-12 ml-4 inline' src={arrow} alt="arrow"/>
                         </p> 
                     </a>
                 </div>
             </div>
             <div className='h-full flex items-center overflow-hidden' style={{width: '80%'}}>
-                <img className='w-full' src={notes} />
+                <img className='w-full' src={notes} alt=''/>
             </div>
             <div className='flex flex-col' id="login" style={{width: '60%'}}>
                 <div className='mt-24'>
-                    <img src={logo} style={{width: '649px', height: '194px'}} />
+                    <img src={logo} alt='onsight logo' style={{width: '649px', height: '194px'}} />
                 </div>
                 <form className='ml-9 flex flex-col items-start' onSubmit={handleLogin}>
                     <div className='mt-11 flex flex-col items-start'>
@@ -91,7 +91,7 @@ function LandingPage() {
                     </div>
                     <button type="submit" className='mt-9 flex flex-row items-center'>
                         <p className='text-primary font-primary font-normal text-6xl'>log in</p>
-                        <img className='h-12 w-12 ml-4' src={arrow} />
+                        <img className='h-12 w-12 ml-4' src={arrow} alt='arrow'/>
                     </button>
                 </form>
                 <div className='ml-9 mt-20'>

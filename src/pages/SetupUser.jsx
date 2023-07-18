@@ -1,5 +1,5 @@
-import { React, useEffect, useInsertionEffect, useMemo, useState } from 'react'
-import { doc, setDoc, getDoc } from "firebase/firestore";
+import { React, useEffect, useMemo, useState } from 'react'
+import { doc, setDoc } from "firebase/firestore";
 import { db } from "../firebase.js"
 import { useDocumentOnce } from "react-firebase-hooks/firestore"
 import { rangeVals, noteNumToLabel } from '../util.js';
@@ -28,7 +28,6 @@ function SetupUser(props) {
     useEffect(() => {
       console.log("userData changed");
       console.log(userData);
-      console.log(user);
     }, [userData])
 
     useEffect(() => {
