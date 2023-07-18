@@ -1,5 +1,4 @@
 import React from 'react'
-import './notation.css';
 
 function Notation() {
   return (

@@ -1,5 +1,4 @@
 import React from 'react'
-import './detector.css'
 
 function Detector() {
   return (

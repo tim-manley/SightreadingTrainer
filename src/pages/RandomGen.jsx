@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import './randomGen.css'
-import { startPitchDetect } from '../../pitchdetect'
-import { checker } from '../../checker'
-import { newExample } from '../../generator'
+import { startPitchDetect } from '../pitchdetect'
+import { checker } from '../checker'
+import { newExample } from '../generator'
 import { useDocumentOnce } from 'react-firebase-hooks/firestore'
-import { db } from '../../firebase'
+import { db } from '../firebase'
 import { doc } from 'firebase/firestore'
-import Notation from '../../components/notation/Notation'
-import Detector from '../../components/detector/Detector'
+import Notation from '../components/Notation'
+import Detector from '../components/Detector'
 
 function RandomGen(props) {
 
