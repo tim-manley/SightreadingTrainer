@@ -5,6 +5,7 @@ import arrow from '../assets/OnsightArrowGraphic-08 1.svg'
 import { auth } from '../firebase.js';
 import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
 import { Navigate } from 'react-router-dom';
+import Navbar from '../components/Navbar';
 
 function LandingPage() {
     const [email, setEmail] = React.useState('');
@@ -19,13 +20,19 @@ function LandingPage() {
 
     if (error) {
         return (
-          <div>
+          <>
+            <Navbar />
             <p>Error: {error.message}</p>
-          </div>
+          </>
         );
       }
       if (loading) {
-        return <p>Loading...</p>;
+        return (
+            <>
+                <Navbar />
+                <p>Loading...</p>
+            </>
+        )
       }
       if (user) {
         console.log(user.email);
@@ -36,7 +43,7 @@ function LandingPage() {
 
     return (
         <div id="" className='h-screen flex flex-nowrap' style={{width: '200%'}}>
-            <div className='w-1/3 mt-24 ml-2.5 flex flex-col '>
+            <div className='mt-24 ml-2.5 flex flex-col' style={{width: '60%'}}>
                 <div className='ml-2.5'>
                     <img src={logo} style={{width: '805px', height: '241px'}} />
                 </div>
@@ -49,14 +56,18 @@ function LandingPage() {
                     </p>
                 </div>
                 <div className='ml-12 mt-8 flex flex-row items-center'>
-                    <a className='text-primary font-primary font-normal text-6xl' href='#login'>Let's get started</a>
-                    <a className='h-12 w-12 ml-4' href='#login'><img src={arrow} /></a>
+                    <a href="#login">
+                        <p className='text-primary font-primary font-normal text-6xl'>
+                            Let's get started
+                            <img className='h-12 w-12 ml-4 inline' src={arrow} />
+                        </p> 
+                    </a>
                 </div>
             </div>
-            <div className='w-1/3'>
-                <img className='h-screen w-full' src={notes} />
+            <div className='h-full flex items-center overflow-hidden' style={{width: '80%'}}>
+                <img className='w-full' src={notes} />
             </div>
-            <div className='w-1/3 flex flex-col' id="login">
+            <div className='flex flex-col' id="login" style={{width: '60%'}}>
                 <div className='mt-24'>
                     <img src={logo} style={{width: '649px', height: '194px'}} />
                 </div>
