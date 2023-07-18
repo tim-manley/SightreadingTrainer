@@ -9,6 +9,7 @@ import RandomGen from "./pages/randomGen/RandomGen.jsx";
 import { auth } from './firebase.js';
 import { useIdToken, useSignOut } from "react-firebase-hooks/auth";
 import SetupUser from "./pages/SetupUser.jsx";
+import Skills from "./pages/Skills.jsx";
 
 function App() {
   const [user, loading, error] = useIdToken(auth);
@@ -40,6 +41,7 @@ function App() {
           <Route exact path="/signup" element={user ? <Navigate to="/home" /> : <SignUp />} />
           <Route exact path="/random" element={user ? <RandomGen user={user} /> : <Navigate to="/login"/>} />
           <Route exact path="/setup" element={user ? <SetupUser user={user} /> : <Navigate to="/login" />} />
+          <Route exact path="/skills" element={user ? <Skills user={user} /> : <Navigate to="/login"/>} />
         </Routes>
       }
     </BrowserRouter>
