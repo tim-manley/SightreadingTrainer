@@ -77,11 +77,9 @@ export function startPitchDetect() {
 var buflen = 2048;
 var buf = new Float32Array( buflen );
 
-var noteStrings = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
-
 function noteFromPitch( frequency ) {
 	var noteNum = 12 * (Math.log( frequency / 440 )/Math.log(2) );
-	return Math.round( noteNum ) + 69;
+	return Math.round( noteNum ) + 33;
 }
 
 function frequencyFromNoteNumber( note ) {
@@ -149,21 +147,31 @@ function updatePitch( time ) {
 		detuneElem.className = "";
 		detuneAmount.innerText = "--";
  	} else {
-	 	detectorElem.className = "confident";
 	 	var pitch = ac;
-	 	pitchElem.innerText = Math.round( pitch ) ;
 	 	var note =  noteFromPitch( pitch );
-		noteElem.innerHTML = noteStrings[note%12];
-		var detune = centsOffFromPitch( pitch, note );
-		if (Math.abs(detune) < 15) { // If within 15 cents, then say in tune
+		// Check in reasonable singing range
+		if (note >= 0 && note <= 48) {
+			detectorElem.className = "confident";
+			pitchElem.innerText = Math.round( pitch ) ;
+			noteElem.innerHTML = note;
+			//noteElem.innerHTML = noteStrings[note%12];
+			var detune = centsOffFromPitch( pitch, note );
+			if (Math.abs(detune) < 15) { // If within 15 cents, then say in tune
+				detuneElem.className = "";
+				detuneAmount.innerHTML = "--";
+			} else {
+				if (detune < 0)
+					detuneElem.className = "flat";
+				else
+					detuneElem.className = "sharp";
+				detuneAmount.innerHTML = Math.abs( detune );
+			}
+		} else { // If out of range, just don't show
+			detectorElem.className = "vague";
+			pitchElem.innerText = "--";
+			noteElem.innerText = "-";
 			detuneElem.className = "";
-			detuneAmount.innerHTML = "--";
-		} else {
-			if (detune < 0)
-				detuneElem.className = "flat";
-			else
-				detuneElem.className = "sharp";
-			detuneAmount.innerHTML = Math.abs( detune );
+			detuneAmount.innerText = "--";
 		}
 	}
 
