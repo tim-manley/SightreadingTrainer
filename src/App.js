@@ -10,6 +10,7 @@ import { auth } from './firebase.js';
 import { useIdToken, useSignOut } from "react-firebase-hooks/auth";
 import SetupUser from "./pages/SetupUser.jsx";
 import Skills from "./pages/Skills.jsx";
+import './index.css';
 
 function App() {
   const [user, loading, error] = useIdToken(auth);
