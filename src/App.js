@@ -11,6 +11,8 @@ import SetupUser from "./pages/SetupUser.jsx";
 import Skills from "./pages/Skills.jsx";
 import './index.css';
 import NotBuilt from "./pages/NotBuilt.jsx";
+import Lessons from "./pages/Lessons.jsx";
+import Quick from "./pages/Quick.jsx";
 
 function App() {
   const [user, loading, error] = useIdToken(auth);
@@ -38,11 +40,17 @@ function App() {
           <Route exact path="/" element={user ? <Navigate to="/home" /> : <LandingPage />} />
           <Route exact path="/login" element={user ? <Navigate to="/home" /> : <Navigate to="/#login" />}/>
           <Route exact path="/home" element={user ? <HomePage /> : <Navigate to="/"/>}/>
+          <Route exact path="/lessons" element={user ? <Lessons />  : <Navigate to="/"/> } />
           <Route exact path="/signup" element={user ? <Navigate to="/home" /> : <SignUp />} />
-          <Route exact path="/random" element={user ? <RandomGen user={user} /> : <Navigate to="/login"/>} />
-          <Route exact path="/setup" element={user ? <SetupUser user={user} /> : <Navigate to="/login" />} />
-          <Route exact path="/skills" element={user ? <Skills user={user} /> : <Navigate to="/login"/>} />
+          <Route exact path="/random" element={user ? <RandomGen user={user} /> : <Navigate to="/"/>} />
+          <Route exact path="/setup" element={user ? <SetupUser user={user} /> : <Navigate to="/" />} />
+          <Route exact path="/skills" element={user ? <Skills user={user} /> : <Navigate to="/"/>} />
           <Route exact path="/notbuilt" element={<NotBuilt />} />
+          <Route exact path="/quick" element={user ? <Quick /> : <Navigate to="/"/>}/>
+          <Route exact path="/focused" element={<NotBuilt />}/>
+          <Route exact path="/custom" element={<NotBuilt />}/>
+          <Route exact path="/settings" element={<NotBuilt />}/>
+          <Route exact path="/account" element={<NotBuilt />}/>
         </Routes>
     </BrowserRouter>
   );

@@ -40,17 +40,22 @@ function HomePage() {
     return (
         <>
             <Navbar />
-            <h1>Protected page!</h1>
-            <p>Email is: {user.email}</p>
-            <Link to="/random">Random Gen</Link>
-            <button onClick={async () => {
-                const success = await signOut();
-                if (success) {
-                    alert("Successfully signed out.");
-                }
-            }}>
-                Sign Out
-            </button>
+            <div className="ml-24 mt-5">
+                <h1>Home page</h1>
+                <p>Email is: {user.email}</p>
+                <div className="flex flex-row space-x-4">
+                    <Link to="/random">Random Gen</Link>
+                    <Link to="/lessons">Lessons</Link>
+                    <button onClick={async () => {
+                        const success = await signOut();
+                        if (success) {
+                            alert("Successfully signed out.");
+                        }
+                    }}>
+                        Sign Out
+                    </button>
+                </div>
+            </div>
         </>
     );
 };
