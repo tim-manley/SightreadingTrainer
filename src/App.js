@@ -13,6 +13,7 @@ import './index.css';
 import NotBuilt from "./pages/NotBuilt.jsx";
 import Lessons from "./pages/Lessons.jsx";
 import Quick from "./pages/Quick.jsx";
+import Loading from "./components/Loading.jsx";
 
 function App() {
   const [user, loading, error] = useIdToken(auth);
@@ -21,7 +22,9 @@ function App() {
     return (
       <>
         <Navbar />
-        <p>Loading...</p>
+        <div className="mt-24 flex flex-row items-center justify-center">
+          <Loading text="loading..." />
+        </div>
       </>
     );
   }

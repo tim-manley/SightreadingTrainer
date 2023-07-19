@@ -4,8 +4,7 @@ import logo from '../assets/officialLogo-06 1.svg'
 import arrow from '../assets/OnsightArrowGraphic-08 1.svg'
 import { auth } from '../firebase.js';
 import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
-import { Navigate } from 'react-router-dom';
-import Navbar from '../components/Navbar';
+import Loading from '../components/Loading';
 
 function LandingPage() {
     const [email, setEmail] = React.useState('');
@@ -18,28 +17,34 @@ function LandingPage() {
         signInWithEmailAndPassword(email, password);
     }
 
+    var errorMessage = null;
+
     if (error) {
-        return (
-          <>
-            <Navbar />
-            <p>Error: {error.message}</p>
-          </>
-        );
-      }
-      if (loading) {
-        return (
-            <>
-                <Navbar />
-                <p>Loading...</p>
-            </>
-        )
-      }
-      if (user) {
+        console.log(error.message)
+        switch (error.code) {
+            case "auth/user-not-found":
+                errorMessage = "incorrect email";
+                break;
+            case "auth/wrong-password":
+                errorMessage = "incorrect password";
+                break;
+            case "auth/too-many-requests":
+                errorMessage = "too many log in attempts, please try again later";
+                break;
+            default:
+                errorMessage = "something went wrong..."
+                break;
+        }
+    }
+
+
+      /*if (user) {
+        setTimeout(() => {}, 10000)
         console.log(user.email);
         return (
           <Navigate to="/home" />
         );
-      }
+      }*/
 
     return (
         <div id="" className='h-screen flex flex-nowrap' style={{width: '200%'}}>
@@ -71,30 +76,41 @@ function LandingPage() {
                 <div className='mt-24'>
                     <img src={logo} alt='onsight logo' style={{width: '649px', height: '194px'}} />
                 </div>
-                <form className='ml-9 flex flex-col items-start' onSubmit={handleLogin}>
-                    <div className='mt-11 flex flex-col items-start'>
-                        <input
-                            className='w-72 h-8 bg-gray-200 rounded-lg font-primary font-normal text-lg text-black/50 px-2.5 outline-primary'
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            placeholder="email"
+                <div className='h-80 w-72 px-9 py-11'>
+                    {loading || user ? 
+                        <Loading />
+                        :
+                        <form className='flex flex-col items-start' onSubmit={handleLogin}>
                             
-                        />
-                        <input
-                            className='w-72 h-8 mt-3 bg-gray-200 rounded-lg font-primary font-normal text-lg text-black/50 px-2.5 outline-primary'
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            placeholder="password"
-                        />
-                    </div>
-                    <button type="submit" className='mt-9 flex flex-row items-center'>
-                        <p className='text-primary font-primary font-normal text-6xl'>log in</p>
-                        <img className='h-12 w-12 ml-4' src={arrow} alt='arrow'/>
-                    </button>
-                </form>
-                <div className='ml-9 mt-20'>
+                            <div className='flex flex-col items-start'>
+                                <p className='h-8 font-primary font-normal text-2xl text-red-500'>
+                                    {error ? errorMessage : null}
+                                </p>
+                                <input
+                                    className='w-72 h-8 mt-3 bg-gray-200 rounded-lg font-primary font-normal text-lg text-black/50 px-2.5 outline-primary'
+                                    type="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    placeholder="email"
+                                    
+                                />
+                                <input
+                                    className='w-72 h-8 mt-3 bg-gray-200 rounded-lg font-primary font-normal text-lg text-black/50 px-2.5 outline-primary'
+                                    type="password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    placeholder="password"
+                                />
+                            </div>
+                            <button type="submit" className='mt-9 flex flex-row items-center'>
+                                <p className='text-primary font-primary font-normal text-6xl'>log in</p>
+                                <img className='h-12 w-12 ml-4' src={arrow} alt='arrow'/>
+                            </button>
+                        </form>
+                    }   
+                </div>
+                        
+                <div className='ml-9 mt-10'>
                     <p className='font-primary font-normal text-3xl text-stone-400'>new here? <a className='text-primary' href="#signup">sign up, it's free.</a></p>
                 </div>
                 <div className='ml-9'>
