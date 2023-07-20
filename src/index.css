@@ -4,7 +4,9 @@
 
 @font-face {
     font-family: Garcia;
-    src: url("fonts/GARCIA-Regular.otf") format("opentype");
+    src: url("fonts/Garcia-Regular.woff2") format("woff2"),
+        url("fonts/Garcia-Regular.woff") format("woff"),
+        url("fonts/GARCIA-Regular.otf") format("opentype");
 }
 
 html {

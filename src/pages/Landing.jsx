@@ -1,7 +1,7 @@
 import React from 'react';
-import notes from '../assets/NotesArtwork-07.svg'
-import logo from '../assets/officialLogo-06 1.svg'
-import arrow from '../assets/OnsightArrowGraphic-08 1.svg'
+import {ReactComponent as NotesSVG} from '../assets/NotesArtwork-07.svg'
+import {ReactComponent as LogoSVG} from '../assets/officialLogo-06 1.svg'
+import {ReactComponent as ArrowSVG} from '../assets/OnsightArrowGraphic-08 1.svg'
 import { auth } from '../firebase.js';
 import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
 import Loading from '../components/Loading';
@@ -50,31 +50,33 @@ function LandingPage() {
         <div id="" className='h-screen flex flex-nowrap' style={{width: '200%'}}>
             <div className='mt-24 ml-2.5 flex flex-col' style={{width: '60%'}}>
                 <div className='ml-2.5'>
-                    <img src={logo} alt='onsight logo' style={{width: '805px', height: '241px'}} />
+                    <LogoSVG style={{width: '805px', height: '241px'}} />
                 </div>
                 <div className='ml-12 mt-7' style={{width: '720px'}}>
-                    <p className='text-black/60 text-2xl leading-10 font-primary font-normal'>
-                    <b className='inline font-semibold'>Onsight is </b>Lorem ipsum dolor sit amet, consectetur adipiscing elit, 
-                    sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-                    Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris 
-                    nisi ut aliquip ex ea commodo consequat.
+                    <p className='text-black/60 text-xl font-primary font-normal'>
+                    Onsight is a novel learning platform that offers an <b className='font-bold text-primary'>immersive</b>, <br />
+                    <b className='font-bold text-primary'> personalized</b> sight reading experience for musicians of all levels. 
+                    <br /><br />
+                    Onsight’s lessons are tailored to <b className='font-bold text-primary'>your unique preferences</b> and skill level,
+                    enabling you to progress at your own pace while enjoying the process. <br />
+                    <b className='font-bold text-primary'> No two lessons in Onsight are the same, because no two learners are.</b>
                     </p>
                 </div>
                 <div className='ml-12 mt-8 flex flex-row items-center'>
-                    <a href="#login">
+                    <a href="#login" className='flex flex-row items-end'>
                         <p className='text-primary font-primary font-normal text-6xl'>
                             Let's get started
-                            <img className='h-12 w-12 ml-4 inline' src={arrow} alt="arrow"/>
                         </p> 
+                        <ArrowSVG className='h-12 w-12 ml-4 inline'/>
                     </a>
                 </div>
             </div>
             <div className='h-full flex items-center overflow-hidden' style={{width: '80%'}}>
-                <img className='w-full' src={notes} alt=''/>
+                <NotesSVG className='w-full'/>
             </div>
             <div className='flex flex-col' id="login" style={{width: '60%'}}>
                 <div className='mt-24'>
-                    <img src={logo} alt='onsight logo' style={{width: '649px', height: '194px'}} />
+                    <LogoSVG style={{width: '649px', height: '194px'}} />
                 </div>
                 <div className='h-80 w-72 px-9 py-11'>
                     {loading || user ? 
@@ -102,9 +104,9 @@ function LandingPage() {
                                     placeholder="password"
                                 />
                             </div>
-                            <button type="submit" className='mt-9 flex flex-row items-center'>
+                            <button type="submit" className='mt-9 flex flex-row items-end'>
                                 <p className='text-primary font-primary font-normal text-6xl'>log in</p>
-                                <img className='h-12 w-12 ml-4' src={arrow} alt='arrow'/>
+                                <ArrowSVG className='h-12 w-12 ml-4'/>
                             </button>
                         </form>
                     }   
@@ -118,6 +120,7 @@ function LandingPage() {
                 </div>
             </div>
         </div>
+        
     );
 };
 
