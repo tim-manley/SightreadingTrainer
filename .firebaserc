@@ -5,6 +5,9 @@
   "targets": {
     "sight-reading-trainer-898b0": {
       "hosting": {
+        "default": [
+          "sight-reading-trainer-898b0"
+        ],
         "onsight-music": [
           "onsight-music"
         ],
