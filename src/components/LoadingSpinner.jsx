@@ -1,6 +1,6 @@
 import React from 'react'
 
-function Loading(props) {
+function LoadingSpinner(props) {
   return (
     <div className='flex flex-col items-center justify-items-center'>
         <div>
@@ -34,4 +34,4 @@ function Loading(props) {
   )
 }
 
-export default Loading
+export default LoadingSpinner

@@ -4,7 +4,7 @@ import { useSignOut } from "react-firebase-hooks/auth";
 import { useIdToken } from "react-firebase-hooks/auth";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import Loading from "../components/Loading";
+import Loading from "../components/LoadingSpinner";
 
 function HomePage() {
 

@@ -4,7 +4,19 @@
 
 @font-face {
     font-family: Garcia;
-    src: url("fonts/GARCIA-Regular.otf") format("opentype");
+    /* woff fonts had more space above than below... */
+    src: url("fonts/Garcia/GARCIA-Regular.otf") format("opentype");
+}
+
+@font-face {
+    font-family: Adelle-Sans;
+    src: url("fonts/Adelle\ Sans/adelle-sans.otf") format("opentype");
+}
+
+@font-face {
+    font-family: Adelle-Sans;
+    src: url("fonts/Adelle\ Sans/adelle-sans-bold.otf") format("opentype");
+    font-weight: 700;
 }
 
 html {
