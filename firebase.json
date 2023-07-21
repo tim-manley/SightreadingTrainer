@@ -1,5 +1,36 @@
 {
-  "hosting": {
+  "hosting": [
+  {
+    "public": "build",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  },
+  {
+    "target": "onsight-music",
+    "public": "build",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  },
+  {
+    "target": "sightreadingtrainer",
     "public": "build",
     "ignore": [
       "firebase.json",
@@ -13,4 +44,5 @@
       }
     ]
   }
+]
 }

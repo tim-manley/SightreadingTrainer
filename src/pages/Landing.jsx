@@ -63,6 +63,9 @@ function LandingPage() {
             case "auth/user-not-found":
                 errorMessage = "incorrect email";
                 break;
+            case "auth/invalid-email":
+                errorMessage = "please enter a valid email address";
+                break;
             case "auth/wrong-password":
                 errorMessage = "incorrect password";
                 break;
@@ -102,12 +105,12 @@ function LandingPage() {
     }
 
     return (
-        <div id="landingPage" className='h-screen flex flex-nowrap' style={{width: '200%', height: '100vh', overflow: 'hidden'}}>
-            <div className='mt-24 ml-2.5 flex flex-col' style={{width: '60%'}}>
+        <div id="landingPage" className='h-screen grid grid-cols-6' style={{width: '200%', height: '100vh', overflow: 'hidden'}}>
+            <div className='h-screen col-span-2 px-2.5 py-24 flex flex-col justify-evenly'>
                 <div className='ml-2.5'>
                     <LogoSVG style={{width: '805px', height: '241px'}} />
                 </div>
-                <div className='ml-12 mt-7' style={{width: '720px'}}>
+                <div className='ml-12 mt-7'>
                     <p className='text-black/60 text-xl font-adelle font-normal'>
                     Onsight is a novel learning platform that offers an <b className='font-bold text-primary'>immersive</b>, <br />
                     <b className='font-bold text-primary'> personalized</b> sight reading experience for musicians of all levels. 
@@ -118,7 +121,7 @@ function LandingPage() {
                     </p>
                 </div>
                 <div className='ml-12 mt-8 flex flex-row items-center'>
-                    <a href="#login" className='flex flex-row items-end'>
+                    <a href="#login" className='flex flex-row items-center'>
                         <p className='text-primary font-primary font-normal text-6xl'>
                             Let's get started
                         </p> 
@@ -126,10 +129,10 @@ function LandingPage() {
                     </a>
                 </div>
             </div>
-            <div className='h-full flex items-center overflow-hidden' style={{width: '80%'}}>
-                <NotesSVG className='w-full'/>
+            <div className='h-screen col-span-2 grid grid-cols-1 items-center justify-center overflow-hidden'>
+                <NotesSVG style={{width: '100%'}}/>
             </div>
-            <div className='flex flex-col' id="login" style={{width: '60%'}}>
+            <div className='h-screen col-span-2 flex flex-col' id="login">
                 <div className='mt-24'>
                     <LogoSVG style={{width: '649px', height: '194px'}} />
                 </div>
@@ -177,7 +180,7 @@ function LandingPage() {
                     </div>
                     : 
                     <div id="loginSection">
-                        <div className='h-80 w-72 px-9 py-11'>
+                        <div className='h-80 flex flex-col items-start px-9 py-11'>
                             {loading ? 
                                 <LoadingSpinner />
                                 :
@@ -202,7 +205,7 @@ function LandingPage() {
                                             placeholder="password"
                                         />
                                     </div>
-                                    <button type="submit" className='mt-9 flex flex-row items-end'>
+                                    <button type="submit" className='mt-9 flex flex-row items-center'>
                                         <p className='text-primary font-primary font-normal text-6xl'>log in</p>
                                         <ArrowSVG className='h-12 w-12 ml-4'/>
                                     </button>

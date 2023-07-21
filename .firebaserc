@@ -1,5 +1,18 @@
 {
   "projects": {
     "default": "sight-reading-trainer-898b0"
-  }
+  },
+  "targets": {
+    "sight-reading-trainer-898b0": {
+      "hosting": {
+        "onsight-music": [
+          "onsight-music"
+        ],
+        "sightreadingtrainer": [
+          "sightreadingtrainer"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }
