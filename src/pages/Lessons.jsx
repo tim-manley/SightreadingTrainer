@@ -3,15 +3,49 @@ import Navbar from '../components/Navbar'
 import settings from '../assets/SettingsIconOnsight.svg'
 import account from '../assets/AccountIconOnsight.svg'
 import LessonCard from '../components/LessonCard'
+import { db } from '../firebase'
+import { doc } from 'firebase/firestore'
+import { useDocumentOnce } from 'react-firebase-hooks/firestore'
+import { useState, useEffect } from 'react'
+import Loading from '../pages/Loading'
 
-function Lessons() {
+function Lessons(props) {
+
+    const [userDoc, loading, error] = useDocumentOnce(doc(db, "users", props.user.uid));
+
+    const [user, setUser] = useState({
+      range: [0, 48],
+      intervalsScore: 10,
+    })
+
+    useEffect(() => {
+      console.log("userDoc changed");
+      if (userDoc) {
+        console.log("userDoc true")
+        console.log(userDoc.data())
+        setUser(userDoc.data())
+      }
+    }, [userDoc])
+
+    if (loading) {
+        return (
+            <Loading />
+        );
+    }
+
+    if (error) {
+        return (
+            <p>Error: {error.message}</p>
+        );
+    }
+
   return (
     <>
         <Navbar />
         <div className="mx-24 my-5 flex flex-col">
             <div className="flex flex-row items-center">
                 <div className='w-2/3 text-5xl font-primary font-normal'>
-                    Welcome back, Account Name
+                    Welcome back, {user ? user.name : null}
                 </div>
                 <div className="w-1/3 flex flex-row justify-end space-x-8">
                     <div>

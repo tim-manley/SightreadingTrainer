@@ -13,19 +13,14 @@ import './index.css';
 import NotBuilt from "./pages/NotBuilt.jsx";
 import Lessons from "./pages/Lessons.jsx";
 import Quick from "./pages/Quick.jsx";
-import Loading from "./components/Loading.jsx";
+import Loading from "./pages/Loading.jsx";
 
 function App() {
   const [user, loading, error] = useIdToken(auth);
 
   if (loading) {
     return (
-      <>
-        <Navbar />
-        <div className="mt-24 flex flex-row items-center justify-center">
-          <Loading text="loading..." />
-        </div>
-      </>
+      <Loading />
     );
   }
   if (error) {
@@ -40,10 +35,11 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route exact path="/" element={user ? <Navigate to="/home" /> : <LandingPage />} />
+        <Route exact path="/" element={<LandingPage />} />
+        {/*<Route exact path="/" element={user ? <Navigate to="/home" /> : <LandingPage />} />*/}
         <Route exact path="/login" element={user ? <Navigate to="/home" /> : <Navigate to="/#login" />}/>
         <Route exact path="/home" element={user ? <HomePage /> : <Navigate to="/"/>}/>
-        <Route exact path="/lessons" element={user ? <Lessons />  : <Navigate to="/"/> } />
+        <Route exact path="/lessons" element={user ? <Lessons user={user} />  : <Navigate to="/"/> } />
         <Route exact path="/signup" element={user ? <Navigate to="/home" /> : <SignUp />} />
         <Route exact path="/random" element={user ? <RandomGen user={user} /> : <Navigate to="/"/>} />
         <Route exact path="/setup" element={user ? <SetupUser user={user} /> : <Navigate to="/" />} />
