@@ -11,6 +11,7 @@
 @font-face {
     font-family: Adelle-Sans;
     src: url("fonts/Adelle\ Sans/adelle-sans.otf") format("opentype");
+    font-weight: 400;
 }
 
 @font-face {

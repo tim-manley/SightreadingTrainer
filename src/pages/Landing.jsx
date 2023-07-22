@@ -106,13 +106,13 @@ function LandingPage() {
 
     return (
         <div id="landingPage" className='h-screen grid grid-cols-6' style={{width: '200%', height: '100vh', overflow: 'hidden'}}>
-            <div className='h-screen col-span-2 px-2.5 py-24 flex flex-col justify-evenly'>
-                <div className='ml-2.5'>
-                    <LogoSVG style={{width: '805px', height: '241px'}} />
+            <div className='h-screen col-span-2 px-12 py-24 flex flex-col justify-center'>
+                <div>
+                    <LogoSVG />
                 </div>
-                <div className='ml-12 mt-7'>
+                <div className='mt-10'>
                     <p className='text-black/60 text-xl font-adelle font-normal'>
-                    Onsight is a novel learning platform that offers an <b className='font-bold text-primary'>immersive</b>, <br />
+                    Onsight is a novel learning platform that offers an <b className='font-bold text-primary'>immersive</b>,
                     <b className='font-bold text-primary'> personalized</b> sight reading experience for musicians of all levels. 
                     <br /><br />
                     Onsight’s lessons are tailored to <b className='font-bold text-primary'>your unique preferences</b> and skill level,
@@ -120,25 +120,25 @@ function LandingPage() {
                     <b className='font-bold text-primary'> No two lessons in Onsight are the same, because no two learners are.</b>
                     </p>
                 </div>
-                <div className='ml-12 mt-8 flex flex-row items-center'>
+                <div className='mt-8 flex flex-row items-center'>
                     <a href="#login" className='flex flex-row items-center'>
                         <p className='text-primary font-primary font-normal text-6xl'>
                             Let's get started
                         </p> 
-                        <ArrowSVG className='h-12 w-12 ml-4 inline'/>
+                        <ArrowSVG className='h-12 w-12 ml-4 inline fill-primary'/>
                     </a>
                 </div>
             </div>
             <div className='h-screen col-span-2 grid grid-cols-1 items-center justify-center overflow-hidden'>
                 <NotesSVG style={{width: '100%'}}/>
             </div>
-            <div className='h-screen col-span-2 flex flex-col' id="login">
-                <div className='mt-24'>
+            <div className='h-screen col-span-2 flex flex-col justify-center px-11 py-11' id="login">
+                <div>
                     <LogoSVG style={{width: '649px', height: '194px'}} />
                 </div>
                 {signUp ? 
                     <div id="signUpSection">
-                        <div className='flex flex-col items-start px-9 py-11'>
+                        <div className='flex flex-col items-start'>
                             {newLoading ? 
                                 <LoadingSpinner />
                                 :
@@ -172,51 +172,48 @@ function LandingPage() {
                                         </p> 
                                         <button type="submit" className='mt-9 flex flex-row items-end'>
                                         <p className='text-primary font-primary font-normal text-6xl'>sign up</p>
-                                        <ArrowSVG className='h-12 w-12 ml-4'/>
+                                        <ArrowSVG className='h-12 w-12 ml-4 fill-primary'/>
                                     </button>
                                 </form>
                             }
                         </div>
                     </div>
                     : 
-                    <div id="loginSection">
-                        <div className='h-80 flex flex-col items-start px-9 py-11'>
+                    <div id="loginSection" className='flex flex-col justify-evenly'>
+                        <div className='flex flex-col items-start'>
                             {loading ? 
                                 <LoadingSpinner />
                                 :
                                 <form className='flex flex-col items-start' onSubmit={handleLogin}>
-                                    
-                                    <div className='flex flex-col items-start'>
-                                        <p className='h-8 font-primary font-normal text-2xl text-red-500'>
-                                            {error ? errorMessage : null}
-                                        </p>
-                                        <input
-                                            className='w-72 h-8 mt-3 bg-gray-200 rounded-lg font-adelle font-normal text-lg text-black/50 px-2.5 outline-primary'
-                                            type="email"
-                                            value={email}
-                                            onChange={(e) => setEmail(e.target.value)}
-                                            placeholder="email"
-                                        />
-                                        <input
-                                            className='w-72 h-8 mt-3 bg-gray-200 rounded-lg font-adelle font-normal text-lg text-black/50 px-2.5 outline-primary'
-                                            type="password"
-                                            value={password}
-                                            onChange={(e) => setPassword(e.target.value)}
-                                            placeholder="password"
-                                        />
-                                    </div>
+                                    <p className='h-8 font-primary font-normal text-2xl text-red-500'>
+                                        {error ? errorMessage : null}
+                                    </p>
+                                    <input
+                                        className='w-72 h-8 mt-3 bg-gray-200 rounded-lg font-adelle font-normal text-lg text-black/50 px-2.5 outline-primary'
+                                        type="email"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        placeholder="email"
+                                    />
+                                    <input
+                                        className='w-72 h-8 mt-3 bg-gray-200 rounded-lg font-adelle font-normal text-lg text-black/50 px-2.5 outline-primary'
+                                        type="password"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        placeholder="password"
+                                    />
                                     <button type="submit" className='mt-9 flex flex-row items-center'>
                                         <p className='text-primary font-primary font-normal text-6xl'>log in</p>
-                                        <ArrowSVG className='h-12 w-12 ml-4'/>
+                                        <ArrowSVG className='h-12 w-12 ml-4 fill-primary'/>
                                     </button>
                                 </form>
                             }   
                         </div>
                                 
-                        <div className='ml-9 mt-10'>
+                        <div className='mt-10'>
                             <p className='font-primary font-normal text-3xl text-stone-400'>new here? <button className='text-primary' onClick={() => setSignUp(true)}>sign up, it's free.</button></p>
                         </div>
-                        <div className='ml-9'>
+                        <div>
                             <a className='font-primary font-normal text-xl text-stone-400' href='#forgot'>forgot password</a>
                         </div>
                     </div>

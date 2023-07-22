@@ -14,6 +14,7 @@ import NotBuilt from "./pages/NotBuilt.jsx";
 import Lessons from "./pages/Lessons.jsx";
 import Quick from "./pages/Quick.jsx";
 import Loading from "./pages/Loading.jsx";
+import AccountPrefs from "./pages/AccountPrefs.jsx";
 
 function App() {
   const [user, loading, error] = useIdToken(auth);
@@ -49,7 +50,7 @@ function App() {
         <Route exact path="/focused" element={<NotBuilt />}/>
         <Route exact path="/custom" element={<NotBuilt />}/>
         <Route exact path="/settings" element={<NotBuilt />}/>
-        <Route exact path="/account" element={<NotBuilt />}/>
+        <Route exact path="/account" element={user ? <AccountPrefs /> : <Navigate to="/"/>}/>
       </Routes>
     </BrowserRouter>
   );
