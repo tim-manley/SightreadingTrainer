@@ -53,12 +53,12 @@ function nextNote() {
     currentNoteNum = abcNoteToNoteNum(abcNote);
 }
 
-export function checker(numNotes) {
+export function checker(targetID, numNotes) {
 
     noteCount = numNotes;
     let correctArray = new Array(noteCount).fill(0);
 
-    overlayNotes = document.getElementById("overlayTarget").querySelectorAll(".abcjs-note");
+    overlayNotes = document.getElementById(targetID).querySelectorAll(".abcjs-note");
 
     // Color the first note blue
     highlightNote(0, 'blue');
@@ -101,9 +101,9 @@ export function checker(numNotes) {
                     // Set wrong in correctArray
                     correctArray[currentNoteIndex] = -1;
                     // Move overlay note to the note that's being sung
-                    reRenderOverlay(currentNoteIndex, playedNoteNum);
+                    reRenderOverlay(targetID, currentNoteIndex, playedNoteNum);
                     // Refind overlay notes
-                    overlayNotes = document.getElementById("overlayTarget").querySelectorAll(".abcjs-note");
+                    overlayNotes = document.getElementById(targetID).querySelectorAll(".abcjs-note");
                     // Recolor notes up to and including current
                     for (let i = 0; i <= currentNoteIndex; i++) {
                         if (correctArray[i] === 1) {

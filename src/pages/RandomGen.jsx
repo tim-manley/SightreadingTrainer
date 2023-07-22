@@ -92,7 +92,7 @@ function RandomGen(props) {
                 <button id="newExample" onClick={handleNewExample}>Generate new example</button>
                 <button id="pitchDetect" onClick={() => {
                     startPitchDetect();
-                    checker(params.numNotes);}}>Start</button><br />
+                    checker("overlayTarget", params.numNotes);}}>Start</button><br />
             </div>
 
             <Detector />

@@ -58,7 +58,7 @@ export const numToNote = [
 ];
 
 // Creates a sequence of arhythmic notes
-function generateNotes(params) {
+export function generateNotes(params) {
     // Parse params
     const numNotes = params.numNotes;
     const clef = params.clef;
@@ -115,15 +115,15 @@ function generateNotes(params) {
 
 let globalOverlayAbcString = "";
 
-export function newExample(params) {
+export function newExample(targetID, params) {
     const abcString = generateNotes(params);
     globalOverlayAbcString = abcString;
     console.log(abcString);
     // Render overlay example (for live feedback)
-    abcjs.renderAbc("overlayTarget", abcString, { add_classes: true });
+    abcjs.renderAbc(targetID, abcString, { add_classes: true });
 }
 
-export function reRenderOverlay(noteIndex, newNoteNum) {
+export function reRenderOverlay(targetID, noteIndex, newNoteNum) {
     const abcLines = globalOverlayAbcString.split("\n");
     const notesLine = abcLines[abcLines.length - 1];
     const notes = notesLine.split(" ");
@@ -143,5 +143,5 @@ export function reRenderOverlay(noteIndex, newNoteNum) {
         }
     }
     globalOverlayAbcString = newAbcString;
-    abcjs.renderAbc("overlayTarget", newAbcString, { add_classes: true })
+    abcjs.renderAbc(targetID, newAbcString, { add_classes: true })
 }
