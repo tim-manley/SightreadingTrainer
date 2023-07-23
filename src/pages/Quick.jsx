@@ -70,8 +70,8 @@ function Quick() {
                         </svg>
                     </button>
                 </div>
-                <div id="notesTarget" className='mt-6 mr-24 h-44 border-solid border-3 border-primary rounded-2xl'>
-                    
+                <div className='mt-6 mr-24 h-44 border-solid border-3 border-primary rounded-2xl flex flex-row items-center justify-center'>
+                    <div id="notesTarget"></div>
                 </div>
                 <div className='mt-6 mr-24 flex flex-row justify-end'>
                     <button className='flex flex-row items-center space-x-4'>
