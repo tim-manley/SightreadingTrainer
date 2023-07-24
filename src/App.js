@@ -51,6 +51,7 @@ function App() {
         <Route exact path="/custom" element={<NotBuilt />}/>
         <Route exact path="/settings" element={<NotBuilt />}/>
         <Route exact path="/account" element={user ? <AccountPrefs /> : <Navigate to="/"/>}/>
+        <Route exact path="/analysis" element={user ? <NotBuilt /> : <Navigate to="/"/>}/>
       </Routes>
     </BrowserRouter>
   );
