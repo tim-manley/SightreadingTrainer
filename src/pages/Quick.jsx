@@ -7,8 +7,13 @@ import { newExample } from '../generator'
 import { startPitchDetect } from '../pitchdetect'
 import { checker } from '../checker'
 import Detector from '../components/Detector'
+import { useDocumentOnce } from 'react-firebase-hooks/firestore'
+import { doc, setDoc, getDoc } from 'firebase/firestore'
+import { db } from '../firebase'
 
-function Quick() {
+function Quick(props) {
+
+    const [userDoc, loading, error] = useDocumentOnce(doc(db, "users", props.user.uid));
 
     let navigate = useNavigate();
 
@@ -41,10 +46,28 @@ function Quick() {
         checker("notesTarget", params.numNotes, intervals, intervalsDelta); // modifies last 2 params
     };
 
+    async function updateUser(currentData) {
+        try {
+          let docRef = await setDoc(doc(db, "users", props.user.uid), currentData);
+          console.log("success!", docRef);
+        } catch (error) {
+          console.error(error);
+        }
+      }
+
     const handleNextClick = () => {
-        newExample("notesTarget", params);
         console.log(intervals);
         console.log(intervalsDelta);
+        let currentData = userDoc.data();
+        for (const key in intervalsDelta) {
+            currentData.intervalsScores[key] += intervalsDelta[key];
+        }
+        let vals = Object.values(currentData.intervalsScores);
+        let newIntervalsScore = vals.reduce((acc, c) => acc + c, 0) / vals.length;
+        currentData.intervalsScore = newIntervalsScore;
+        updateUser(currentData)
+        .then(() => {newExample("notesTarget", params)})
+        .catch((error) => console.error(error));
     }
 
   return (

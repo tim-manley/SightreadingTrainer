@@ -46,7 +46,7 @@ function App() {
         <Route exact path="/setup" element={user ? <SetupUser user={user} /> : <Navigate to="/" />} />
         <Route exact path="/skills" element={user ? <Skills user={user} /> : <Navigate to="/"/>} />
         <Route exact path="/notbuilt" element={<NotBuilt />} />
-        <Route exact path="/quick" element={user ? <Quick /> : <Navigate to="/"/>}/>
+        <Route exact path="/quick" element={user ? <Quick user={user} /> : <Navigate to="/"/>}/>
         <Route exact path="/focused" element={<NotBuilt />}/>
         <Route exact path="/custom" element={<NotBuilt />}/>
         <Route exact path="/settings" element={<NotBuilt />}/>
