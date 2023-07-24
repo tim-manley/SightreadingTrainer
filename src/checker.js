@@ -28,7 +28,7 @@ function getAbcNote(noteIndex) {
         let abcNoteVal = note.getAttribute("data-name");
         return abcNoteVal;
     } catch (error) {
-        console.log("No notes");
+        console.error("No notes");
         return null;
     }
 }
@@ -38,7 +38,22 @@ function highlightNote(noteIndex, color) {
     if (note == null) {
         return null;
     }
-    note.setAttribute("fill", color);
+    let colorCode;
+    switch (color) {
+        case "primary":
+            colorCode = '#31B2EA';
+            break;
+        case "red-500":
+            colorCode = '#ef4444';
+            break;
+        case "green-500":
+            colorCode = '#22c55e';
+            break;
+        default:
+            colorCode = 'black';
+            break;
+    }
+    note.setAttribute("fill", colorCode);
     note.setAttribute("opacity", "1");
     return 1;
 }
@@ -61,7 +76,7 @@ export function checker(targetID, numNotes) {
     overlayNotes = document.getElementById(targetID).querySelectorAll(".abcjs-note");
 
     // Color the first note blue
-    highlightNote(0, 'blue');
+    highlightNote(0, 'primary');
     currentNoteIndex = 0;
     currentNoteNum = abcNoteToNoteNum(getAbcNote(currentNoteIndex));
 
@@ -80,7 +95,7 @@ export function checker(targetID, numNotes) {
             return;
         }
         let playedNoteNum = parseInt(playedNoteEl.innerHTML);
-        console.log("Played num: ", playedNoteNum);
+        //console.log("Played num: ", playedNoteNum);
 
         // If past last note, clear the checker interval
         if (currentNoteIndex >= numNotes) {
@@ -91,12 +106,12 @@ export function checker(targetID, numNotes) {
         if (playedNoteNum === currentPlayedNoteNum) {
             elapsed += interval; // Add to elapsed time singing the note
             if (elapsed >= timeThresh) { // If sung for long enough, check if note is correct
-                console.log("threshold reached");
+                //console.log("threshold reached");
                 if (playedNoteNum === currentNoteNum) {
                     correctArray[currentNoteIndex] = 1;
-                    highlightNote(currentNoteIndex, "green")
+                    highlightNote(currentNoteIndex, "green-500")
                     nextNote();
-                    highlightNote(currentNoteIndex, "blue")
+                    highlightNote(currentNoteIndex, "primary")
                 } else {
                     // Set wrong in correctArray
                     correctArray[currentNoteIndex] = -1;
@@ -107,14 +122,14 @@ export function checker(targetID, numNotes) {
                     // Recolor notes up to and including current
                     for (let i = 0; i <= currentNoteIndex; i++) {
                         if (correctArray[i] === 1) {
-                            highlightNote(i, "green");
+                            highlightNote(i, "green-500");
                         } else if (correctArray[i] === -1) {
-                            highlightNote(i, "red");
+                            highlightNote(i, "red-500");
                         }
                     }
                     // Next note
                     nextNote();
-                    highlightNote(currentNoteIndex, "blue");
+                    highlightNote(currentNoteIndex, "primary");
                 }
                 clearInterval(checkerInterval);
                 setTimeout(() => {checkerInterval = setInterval(checkCorrect, interval)}, 600); // Only for arhythmic things

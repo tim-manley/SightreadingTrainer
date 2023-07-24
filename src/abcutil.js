@@ -30,8 +30,8 @@ export function abcNoteToNoteNum(abcNote) {
     }
     // Need to map to a number between 0-48
     // Start at note shift value
-    console.log("Abc note: ", abcNote);
-    console.log("Char at: ", abcNote.charAt(noteLetterIndex));
+    //console.log("Abc note: ", abcNote);
+    //console.log("Char at: ", abcNote.charAt(noteLetterIndex));
     let noteNum = shiftMap[abcNote.charAt(noteLetterIndex).toUpperCase()];
     // Shift based on accidental
     if (noteLetterIndex > 0 && abcNote.charAt(noteLetterIndex - 1) === "_") {
@@ -57,7 +57,7 @@ export function abcNoteToNoteNum(abcNote) {
             noteNum += 24;
         }
     }
-    console.log("Note num calculated: ", noteNum);
+    //console.log("Note num calculated: ", noteNum);
     return noteNum;
 }
 
