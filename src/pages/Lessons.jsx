@@ -83,6 +83,19 @@ function Lessons(props) {
                     text="You carefully craft this lesson using our wide array of build tools. Everything you can imagine is customizable. Great for users with specific preferences for their lesson content."
                 />
             </div>
+            <div className='flex flex-col items-center'>
+                <div>
+                    Overall: {user ? user.overallScore : null}
+                </div>
+                <div className='flex flex-row space-x-4'>
+                    <div>
+                        Intervals: {user ? user.intervalsScore : null}
+                    </div>
+                    <div>
+                        Rhythms: {user ? user.rhythmsScore : null}
+                    </div>
+                </div>
+            </div>
         </div>
     </>
   )

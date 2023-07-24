@@ -3,8 +3,7 @@ import Navbar from '../components/Navbar'
 import LessonCard from '../components/LessonCard'
 import { useNavigate } from 'react-router-dom'
 import moment from 'moment'
-import { generateNotes, newExample } from '../generator'
-import abcjs from 'abcjs'
+import { newExample } from '../generator'
 import { startPitchDetect } from '../pitchdetect'
 import { checker } from '../checker'
 import Detector from '../components/Detector'
@@ -22,6 +21,10 @@ function Quick() {
         range: [7, 24],
     }
 
+    // Passed by reference to checker and updates as notes progress
+    let intervals = [];
+    let intervalsDelta = new Map(); // interval : delta
+
     // Initial load
     useEffect(() => {
         // TODO: Get user scores
@@ -30,12 +33,19 @@ function Quick() {
         
         // Generate abc and render it
         newExample("notesTarget", params);
-    }, []);
+    }, []); // Dependency might not work...
 
     const handleStartClick = () => {
         startPitchDetect();
-        checker("notesTarget", params.numNotes); // 2nd shld be params.numNotes
+        intervals = []; // Empty the intervals array (or not? Just keep populating to pass into analyze?)
+        checker("notesTarget", params.numNotes, intervals, intervalsDelta); // modifies last 2 params
     };
+
+    const handleNextClick = () => {
+        newExample("notesTarget", params);
+        console.log(intervals);
+        console.log(intervalsDelta);
+    }
 
   return (
     <>
@@ -76,7 +86,7 @@ function Quick() {
                     <div id="notesTarget"></div>
                 </div>
                 <div className='mt-6 mr-24 flex flex-col items-end'>
-                    <button className='flex flex-row items-center space-x-4' onClick={() => newExample("notesTarget", params)}>
+                    <button className='flex flex-row items-center space-x-4' onClick={handleNextClick}>
                         <p className='font-adelle font-normal text-4xl text-primary'>new lesson</p>
                         <svg className='fill-primary w-8 h-8' id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80.5 80.45">
                             <path d="M80.45,40.27A40.23,40.23,0,1,1,40.29,0,40.23,40.23,0,0,1,80.45,40.27Zm-14.07,0L38.22,16.09l-4,8.05L50.08,36.06l-.06.18H14.14v8h36.1l-16.05,12,4,8Z"/>

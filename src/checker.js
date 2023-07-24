@@ -5,6 +5,7 @@ let noteCount;
 
 let currentNoteIndex;
 let currentNoteNum;
+let prevNoteNum;
 
 let overlayNotes;
 
@@ -58,20 +59,23 @@ function highlightNote(noteIndex, color) {
     return 1;
 }
 
-function nextNote() {
+function nextNote(intervals) {
     currentNoteIndex++;
     // Check for end of line
-    if (currentNoteIndex >= noteCount) { 
+    if (currentNoteIndex >= noteCount) {
         return;
     };
     let abcNote = getAbcNote(currentNoteIndex);
+    prevNoteNum = currentNoteNum;
     currentNoteNum = abcNoteToNoteNum(abcNote);
+    intervals.push(currentNoteNum - prevNoteNum);
 }
 
-export function checker(targetID, numNotes) {
+export function checker(targetID, numNotes, intervals, intervalsDelta) {
 
     noteCount = numNotes;
     let correctArray = new Array(noteCount).fill(0);
+    
 
     overlayNotes = document.getElementById(targetID).querySelectorAll(".abcjs-note");
 
@@ -109,12 +113,20 @@ export function checker(targetID, numNotes) {
                 //console.log("threshold reached");
                 if (playedNoteNum === currentNoteNum) {
                     correctArray[currentNoteIndex] = 1;
+                    if (currentNoteIndex > 0) {
+                        let theInterval = intervals[currentNoteIndex-1];
+                        intervalsDelta[theInterval] = (intervalsDelta[theInterval] || 0) + 1;
+                    }
                     highlightNote(currentNoteIndex, "green-500")
-                    nextNote();
+                    nextNote(intervals);
                     highlightNote(currentNoteIndex, "primary")
                 } else {
                     // Set wrong in correctArray
                     correctArray[currentNoteIndex] = -1;
+                    if (currentNoteIndex > 0) {
+                        let theInterval = intervals[currentNoteIndex-1];
+                        intervalsDelta[theInterval] = (intervalsDelta[theInterval] || 0) - 1;
+                    }
                     // Move overlay note to the note that's being sung
                     reRenderOverlay(targetID, currentNoteIndex, playedNoteNum);
                     // Refind overlay notes
@@ -128,7 +140,7 @@ export function checker(targetID, numNotes) {
                         }
                     }
                     // Next note
-                    nextNote();
+                    nextNote(intervals);
                     highlightNote(currentNoteIndex, "primary");
                 }
                 clearInterval(checkerInterval);
