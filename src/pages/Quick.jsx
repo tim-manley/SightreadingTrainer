@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import Navbar from '../components/Navbar'
 import LessonCard from '../components/LessonCard'
 import { useNavigate } from 'react-router-dom'
@@ -7,28 +7,60 @@ import { newExample } from '../generator'
 import { startPitchDetect } from '../pitchdetect'
 import { checker } from '../checker'
 import Detector from '../components/Detector'
-import { useDocumentOnce } from 'react-firebase-hooks/firestore'
 import { doc, setDoc, getDoc } from 'firebase/firestore'
 import { db } from '../firebase'
+import Generating from './Generating'
 
 function Quick(props) {
 
-    const [userDoc, loading, error] = useDocumentOnce(doc(db, "users", props.user.uid));
+    const [firestoreState, setFirestoreState] = useState('loading');
 
     let navigate = useNavigate();
 
     let date = moment().format("MMM D");
 
-    let params = {
+    const [params, setParams] = useState({
         numNotes: 10,
         clef: 'bass',
-        intervals: [5, 7], // Just 4ths and 5ths
+        intervals: [], 
         range: [7, 24],
-    }
+    });
 
     // Passed by reference to checker and updates as notes progress
     let intervals = [];
     let intervalsDelta = new Map(); // interval : delta
+
+    useEffect(() => {
+        console.log("using effect")
+        // Only load into dom if doc successfully loaded
+        if (firestoreState === 'done') {
+            newExample("notesTarget", params);
+            console.log("loaded notes with: ", params);
+        }
+    }, [firestoreState, params])
+
+    const createNewParams = useCallback(() => {
+        getDoc(doc(db, "users", props.user.uid))
+        .then((docRef) => {
+            let minThree = [null, null, null]
+            let minThreeVals = [1000, 1000, 1000];
+            for (const key in docRef.data().intervalsScores) {
+                let thisScore = docRef.data().intervalsScores[key];
+                let biggestVal = minThreeVals.reduce((a, b) => Math.max(a, b), -Infinity);
+                let biggestIndex = minThreeVals.indexOf(biggestVal);
+                if (thisScore < biggestVal) {
+                    minThree[biggestIndex] = parseInt(key);
+                    minThreeVals[biggestIndex] = thisScore;
+                }
+            }
+            console.log("Lowest three scores: ", minThree, minThreeVals);
+            minThree.push(-2,-1,0,1,2); // DESIGN CHOICE: always include unisons, wholes and halves (bidirectional)
+            setParams((p) => {return {...p, intervals: minThree}});
+            // Update loading/error state
+            setFirestoreState('done'); // Triggers effect to rerender abc
+        })
+        .catch((error) => {console.error(error)});
+    }, [props.user.uid]);
 
     // Initial load
     useEffect(() => {
@@ -37,8 +69,8 @@ function Quick(props) {
         // Set generator params based on skills to test (for now manually set)
         
         // Generate abc and render it
-        newExample("notesTarget", params);
-    }, []); // Dependency might not work...
+        createNewParams();
+    }, [createNewParams]); // Dependency might not work...
 
     const handleStartClick = () => {
         startPitchDetect();
@@ -46,28 +78,44 @@ function Quick(props) {
         checker("notesTarget", params.numNotes, intervals, intervalsDelta); // modifies last 2 params
     };
 
-    async function updateUser(currentData) {
-        try {
-          let docRef = await setDoc(doc(db, "users", props.user.uid), currentData);
-          console.log("success!", docRef);
-        } catch (error) {
-          console.error(error);
-        }
-      }
-
     const handleNextClick = () => {
         console.log(intervals);
         console.log(intervalsDelta);
-        let currentData = userDoc.data();
-        for (const key in intervalsDelta) {
-            currentData.intervalsScores[key] += intervalsDelta[key];
-        }
-        let vals = Object.values(currentData.intervalsScores);
-        let newIntervalsScore = vals.reduce((acc, c) => acc + c, 0) / vals.length;
-        currentData.intervalsScore = newIntervalsScore;
-        updateUser(currentData)
-        .then(() => {newExample("notesTarget", params)})
+        setFirestoreState('loading');
+        // Get user data from firestore
+        getDoc(doc(db, "users", props.user.uid))
+        .then((docRef) => {
+            // Extract data
+            let currentData = docRef.data();
+            for (const key in intervalsDelta) {
+                // Update interval scores
+                currentData.intervalsScores[key] += intervalsDelta[key];
+
+                // Keep between 0-100
+                if (currentData.intervalsScores[key] > 100) {
+                    currentData.intervalsScores[key] = 100;
+                }
+                if (currentData.intervalsScores[key] < 0) {
+                    currentData.intervalsScores = 0;
+                }
+            }
+            // Calculate total intervals score
+            let vals = Object.values(currentData.intervalsScores);
+            let newIntervalsScore = vals.reduce((acc, c) => acc + c, 0) / vals.length;
+            currentData.intervalsScore = newIntervalsScore;
+            // Update the user in firebase
+            setDoc(doc(db, "users", props.user.uid), currentData)
+            .then(() => {
+                console.log("successfully uploaded to firestore");
+                createNewParams(); // Update the params (which causes new example to load)
+            })
+            .catch((error) => console.error(error));
+        })
         .catch((error) => console.error(error));
+    }
+
+    if (firestoreState === 'loading') {
+        return <Generating />
     }
 
   return (
