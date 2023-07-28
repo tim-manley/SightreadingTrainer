@@ -13,7 +13,7 @@ module.exports = {
         'light-bg': '#73B7D4',
         'lesson-bg': '#24779B',
         'account-light': '#82C5DC',
-        'account-dark': '#068BB8'
+        'account-dark': '#068BB8',
       }, opacity: {
         '45': '.45'
       }, ringWidth: {
