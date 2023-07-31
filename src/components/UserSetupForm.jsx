@@ -14,8 +14,6 @@ function UserSetupForm(props) {
         return noteNumToLabel(v);
     })
     const clefs = ['treble', 'tenor', 'bass'];
-    
-    useEffect(() => {console.log(rangeLabels)}, []);
 
     // Loading/error states
     const [loading, setLoading] = useState(false);

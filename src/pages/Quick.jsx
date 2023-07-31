@@ -11,10 +11,11 @@ import { doc, setDoc, getDoc } from 'firebase/firestore'
 import { db } from '../firebase'
 import Generating from './Generating'
 import { auth } from '../firebase'
+import Loading from './Loading'
 
 function Quick(props) {
 
-    const [firestoreState, setFirestoreState] = useState('loading');
+    const [firestoreState, setFirestoreState] = useState('');
 
     let navigate = useNavigate();
 
@@ -23,12 +24,32 @@ function Quick(props) {
     const [params, setParams] = useState({numNotes: 10});
 
     const [user, setUser] = useState(null);
-    const [userData, setUserData] = useState({});
+    const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true);
 
     // Passed by reference to checker and updates as notes progress
     let intervals = [];
     let intervalsDelta = new Map(); // interval : delta
+
+    const createNewParams = useCallback(() => {
+        console.log("called with", userData)
+        let minThree = [null, null, null]
+        let minThreeVals = [1000, 1000, 1000];
+        for (const key in userData.intervalsScores) {
+            let thisScore = userData.intervalsScores[key];
+            let biggestVal = minThreeVals.reduce((a, b) => Math.max(a, b), -Infinity);
+            let biggestIndex = minThreeVals.indexOf(biggestVal);
+            if (thisScore < biggestVal) {
+                minThree[biggestIndex] = parseInt(key);
+                minThreeVals[biggestIndex] = thisScore;
+            }
+        }
+        console.log("Lowest three scores: ", minThree, minThreeVals);
+        minThree.push(-2,-1,0,1,2); // DESIGN CHOICE: always include unisons, wholes and halves (bidirectional)
+        setParams((p) => {return {...p, intervals: minThree, range: userData.range, clef: userData.clef}});
+        // Update loading/error state
+        setFirestoreState('done'); // Triggers effect to rerender abc
+    }, [userData])
 
     useEffect(() => {
         setLoading(true);
@@ -37,27 +58,13 @@ function Quick(props) {
                 navigate('/');
             } else {
                 setUser(user);
+                setLoading(false); // User loaded
+                setFirestoreState('loading'); // Starting generation
                 const docRef = doc(db, 'users', user.uid);
                 getDoc(docRef)
                 .then((docSnap) => {
                     if (docSnap.data()) {
-                        setUserData(docSnap.data());
-                        let minThree = [null, null, null]
-                        let minThreeVals = [1000, 1000, 1000];
-                        for (const key in docSnap.data().intervalsScores) {
-                            let thisScore = docSnap.data().intervalsScores[key];
-                            let biggestVal = minThreeVals.reduce((a, b) => Math.max(a, b), -Infinity);
-                            let biggestIndex = minThreeVals.indexOf(biggestVal);
-                            if (thisScore < biggestVal) {
-                                minThree[biggestIndex] = parseInt(key);
-                                minThreeVals[biggestIndex] = thisScore;
-                            }
-                        }
-                        console.log("Lowest three scores: ", minThree, minThreeVals);
-                        minThree.push(-2,-1,0,1,2); // DESIGN CHOICE: always include unisons, wholes and halves (bidirectional)
-                        setParams((p) => {return {...p, intervals: minThree, range: docSnap.data().range, clef: docSnap.data().clef}});
-                        // Update loading/error state
-                        setFirestoreState('done'); // Triggers effect to rerender abc
+                        setUserData(docSnap.data()); // Should trigger callback
                     } else {
                         navigate('/');
                     }
@@ -82,25 +89,12 @@ function Quick(props) {
             console.log("loaded notes with: ", params);
         }
     }, [firestoreState, params])
-    
-    const createNewParams = useCallback(() => {
-        let minThree = [null, null, null]
-        let minThreeVals = [1000, 1000, 1000];
-        for (const key in userData.intervalsScores) {
-            let thisScore = userData.intervalsScores[key];
-            let biggestVal = minThreeVals.reduce((a, b) => Math.max(a, b), -Infinity);
-            let biggestIndex = minThreeVals.indexOf(biggestVal);
-            if (thisScore < biggestVal) {
-                minThree[biggestIndex] = parseInt(key);
-                minThreeVals[biggestIndex] = thisScore;
-            }
+
+    useEffect(() => {
+        if (userData) {
+            createNewParams(userData);
         }
-        console.log("Lowest three scores: ", minThree, minThreeVals);
-        minThree.push(-2,-1,0,1,2); // DESIGN CHOICE: always include unisons, wholes and halves (bidirectional)
-        setParams((p) => {return {...p, intervals: minThree, range: userData.range, clef: userData.clef}});
-        // Update loading/error state
-        setFirestoreState('done'); // Triggers effect to rerender abc
-    }, [userData])
+    }, [userData, createNewParams])
 
     const handleStartClick = () => {
         startPitchDetect();
@@ -142,6 +136,10 @@ function Quick(props) {
 
     if (firestoreState === 'loading') {
         return <Generating />
+    }
+
+    if (loading) {
+        return <Loading />
     }
 
   return (
