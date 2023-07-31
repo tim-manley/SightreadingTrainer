@@ -113,9 +113,9 @@ function Home(props) {
                             </div>
                             <div className='w-1/2 h-full flex flex-col'>
                                 <div className='w-full h-5/6 flex flex-row items-center justify-between font-adelle'>
-                                    <ProgressWheel radius={ 60 } stroke={ 12 } progress={ user.overallScore ? user.overallScore: 0 } text="OVERALL" />
-                                    <ProgressWheel radius={ 60 } stroke={ 4 } progress={ user.intervalsScore ? user.intervalsScore : 0 } text='INTERVALS'/>
-                                    <ProgressWheel radius={ 60 } stroke={ 4 } progress={ user.rhythmScore ? user.rhythmScore : 0 } text='RHYTHM'/>
+                                    <ProgressWheel radius={ 60 } stroke={ 12 } progress={ user ? user.overallScore: 0 } text="OVERALL" />
+                                    <ProgressWheel radius={ 60 } stroke={ 4 } progress={ user ? user.intervalsScore : 0 } text='INTERVALS'/>
+                                    <ProgressWheel radius={ 60 } stroke={ 4 } progress={ user ? user.rhythmScore : 0 } text='RHYTHM'/>
                                 </div>
                                 <div className='w-full h-1/6 pr-5 flex flex-row justify-end items-center font-primary text-xl text-account-dark/70'>
                                     <a href="/home">

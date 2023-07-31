@@ -21,12 +21,11 @@ function ProgressWheel(props) {
         strokeDasharray={ circumference + ' ' + circumference }
         strokeDashoffset={ strokeDashoffset }
         style={ {transform: 'rotate(-90deg)', transformOrigin: '50% 50%'} }
-        stroke-width={ stroke }
         r={ normalizedRadius }
         cx="50%"
         cy="50%"
         />
-        <text className={`font-adelle fill-lesson-bg/100 text-sm ${text === 'OVERALL' ? 'font-bold' : null}`} x="50%" y="50%" text-anchor="middle" dy=".3em">{text}</text>
+        <text className={`font-adelle fill-lesson-bg/100 text-sm ${text === 'OVERALL' ? 'font-bold' : null}`} x="50%" y="50%" textAnchor="middle" dy=".3em">{text}</text>
     </svg>
   )
 }
