@@ -58,7 +58,7 @@ export const numToNote = [
 ];
 
 // Creates a sequence of arhythmic notes
-function generateNotes(params) {
+export function generateNotes(params) {
     // Parse params
     const numNotes = params.numNotes;
     const clef = params.clef;
@@ -95,17 +95,13 @@ function generateNotes(params) {
     for (let i = 1; i < numNotes; i++) {
         // Pick random index for interval value
         let index = Math.floor(Math.random() * intervals.length)
-        // 50/50 whether up or down
-        let up = (Math.random() > 0.5) ? 1 : -1;
-        currentNum = currentNum + (up * intervals[index]);
+        currentNum = currentNum + intervals[index];
         // While out of range, keep trying diff intervals
         while (currentNum > range[1] || currentNum < range[0]) {
-            currentNum = currentNum - (up * intervals[index]);
+            currentNum = currentNum - intervals[index];
             // Pick random index for interval value
             index = Math.floor(Math.random() * intervals.length)
-            // 50/50 whether up or down
-            up = (Math.random() > 0.5) ? 1 : -1;
-            currentNum = currentNum + (up * intervals[index]);
+            currentNum = currentNum + intervals[index];
         }
         currentNote = numToNote[currentNum][Math.floor(Math.random() * numToNote[currentNum].length)];
         abcString = abcString + currentNote + "0 ";
@@ -115,15 +111,15 @@ function generateNotes(params) {
 
 let globalOverlayAbcString = "";
 
-export function newExample(params) {
+export function newExample(targetID, params) {
     const abcString = generateNotes(params);
     globalOverlayAbcString = abcString;
     console.log(abcString);
     // Render overlay example (for live feedback)
-    abcjs.renderAbc("overlayTarget", abcString, { add_classes: true });
+    abcjs.renderAbc(targetID, abcString, { add_classes: true, staffwidth: 600 });
 }
 
-export function reRenderOverlay(noteIndex, newNoteNum) {
+export function reRenderOverlay(targetID, noteIndex, newNoteNum) {
     const abcLines = globalOverlayAbcString.split("\n");
     const notesLine = abcLines[abcLines.length - 1];
     const notes = notesLine.split(" ");
@@ -143,5 +139,5 @@ export function reRenderOverlay(noteIndex, newNoteNum) {
         }
     }
     globalOverlayAbcString = newAbcString;
-    abcjs.renderAbc("overlayTarget", newAbcString, { add_classes: true })
+    abcjs.renderAbc(targetID, newAbcString, { add_classes: true, staffwidth: 600 })
 }

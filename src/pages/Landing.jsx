@@ -1,118 +1,65 @@
-import { React, useState } from 'react';
+import { React, useEffect, useState } from 'react';
 import {ReactComponent as NotesSVG} from '../assets/NotesArtwork-07.svg'
 import {ReactComponent as LogoSVG} from '../assets/officialLogo-06 1.svg'
 import {ReactComponent as ArrowSVG} from '../assets/OnsightArrowGraphic-08 1.svg'
-import { auth } from '../firebase.js';
-import { useSignInWithEmailAndPassword, useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
-import LoadingSpinner from '../components/LoadingSpinner';
-import { Navigate } from 'react-router-dom';
+import LoginForm from '../components/LoginForm';
+import SignUpForm from '../components/SignUpForm';
+import UserSetupForm from '../components/UserSetupForm';
+import { auth, db } from '../firebase';
+import { doc, getDoc } from 'firebase/firestore';
+import { useNavigate } from 'react-router-dom';
+import Loading from './Loading';
 
 function LandingPage() {
 
     // Switch state
-    const [signUp, setSignUp] = useState(false);
+    const [landingState, setLandingState] = useState('login');
 
-    // Login states
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(false);
 
-    // Sign up states
-    const [newEmail, setNewEmail] = useState('');
-    const [newPassword, setNewPassword] = useState('');
-    const [rePassword, setRePassword] = useState('');
+    const navigate = useNavigate();
 
-    // Firebase hooks
-    const [signInWithEmailAndPassword, user, loading, error] = useSignInWithEmailAndPassword(auth);
-    const [createUserWithEmailAndPassword, newUser, newLoading, newError] = useCreateUserWithEmailAndPassword(auth);
+    useEffect(() => {
+        setLoading(true);
+        const unsub = auth.onAuthStateChanged((user) => {
+            setUser(user);
+            if (user) {
+                console.log(user.uid);
+                const docRef = doc(db, "users", user.uid);
+                getDoc(docRef)
+                .then((docSnap) => {
+                    if (docSnap.data()) {
+                        navigate('/home');
+                    } else {
+                        setLandingState('setup');
+                        setLoading(false);
+                    }
+                })
+            } else {
+                setLandingState('login');
+                setLoading('false');
+            }
+        })
 
-    const handleLogin = (e) => {
-        e.preventDefault();
-        signInWithEmailAndPassword(email, password);
-    }
+        return (() => {
+            unsub();
+        })
+    }, [navigate]);
 
-    const [passwordMatch, setPasswordMatch] = useState(true);
-    const [blocked, setBlocked] = useState(true);
-
-    const handleNewPassword = (e) => {
-        setPasswordMatch(e.target.value === rePassword);
-        setNewPassword(e.target.value);
-    }
-
-    const handleReType = (e) => {
-        setPasswordMatch(e.target.value === newPassword);
-        setRePassword(e.target.value);
-    }
-
-    const handleSignUp = (e) => {
-        e.preventDefault();
-        if (!passwordMatch) {
-            return;
-        }
-        console.log(newEmail, newPassword, rePassword);
-        createUserWithEmailAndPassword(newEmail, newPassword);
-    }
-
-    if (user) {
-        console.log("Signed in!");
-        return (<Navigate to="/home"/>);
-    }
-    let errorMessage;
-    if (error) {
-        console.error(error.message)
-        switch (error.code) {
-            case "auth/user-not-found":
-                errorMessage = "incorrect email";
-                break;
-            case "auth/invalid-email":
-                errorMessage = "please enter a valid email address";
-                break;
-            case "auth/wrong-password":
-                errorMessage = "incorrect password";
-                break;
-            case "auth/too-many-requests":
-                errorMessage = "too many log in attempts, please try again later";
-                break;
-            default:
-                errorMessage = "something went wrong..."
-                break;
-        }
-    }
-
-    if (newUser) {
-        console.log("new user here", newUser);
-        return (<Navigate to="/home" />);
-    }
-    let newErrorMessage;
-    if (newError) {
-        console.error(newError.message)
-        switch (newError.code) {
-            case "auth/email-already-in-use":
-                newErrorMessage = "a user with that email already exists";
-                break;
-            case "auth/invalid-email":
-            newErrorMessage = "please enter a valid email address";
-            break;
-            case "auth/weak-password":
-                newErrorMessage = "password must contain at least 6 characters";
-                break;
-            case "auth/too-many-requests":
-                newErrorMessage = "too many log in attempts, please try again later";
-                break;
-            default:
-                newErrorMessage = "something went wrong..."
-                break;
-        }
+    if (loading) {
+        return <Loading />
     }
 
     return (
         <div id="landingPage" className='h-screen grid grid-cols-6' style={{width: '200%', height: '100vh', overflow: 'hidden'}}>
-            <div className='h-screen col-span-2 px-2.5 py-24 flex flex-col justify-evenly'>
-                <div className='ml-2.5'>
-                    <LogoSVG style={{width: '805px', height: '241px'}} />
+            <div className='h-screen col-span-2 px-12 py-24 flex flex-col justify-center'>
+                <div>
+                    <LogoSVG />
                 </div>
-                <div className='ml-12 mt-7'>
+                <div className='mt-10'>
                     <p className='text-black/60 text-xl font-adelle font-normal'>
-                    Onsight is a novel learning platform that offers an <b className='font-bold text-primary'>immersive</b>, <br />
+                    Onsight is a novel learning platform that offers an <b className='font-bold text-primary'>immersive</b>,
                     <b className='font-bold text-primary'> personalized</b> sight reading experience for musicians of all levels. 
                     <br /><br />
                     Onsight’s lessons are tailored to <b className='font-bold text-primary'>your unique preferences</b> and skill level,
@@ -120,106 +67,43 @@ function LandingPage() {
                     <b className='font-bold text-primary'> No two lessons in Onsight are the same, because no two learners are.</b>
                     </p>
                 </div>
-                <div className='ml-12 mt-8 flex flex-row items-center'>
+                <div className='mt-8 flex flex-row items-center'>
                     <a href="#login" className='flex flex-row items-center'>
                         <p className='text-primary font-primary font-normal text-6xl'>
                             Let's get started
                         </p> 
-                        <ArrowSVG className='h-12 w-12 ml-4 inline'/>
+                        <ArrowSVG className='h-12 w-12 ml-4 inline fill-primary'/>
                     </a>
                 </div>
             </div>
             <div className='h-screen col-span-2 grid grid-cols-1 items-center justify-center overflow-hidden'>
                 <NotesSVG style={{width: '100%'}}/>
             </div>
-            <div className='h-screen col-span-2 flex flex-col' id="login">
-                <div className='mt-24'>
+            <div className='h-screen col-span-2 flex flex-col justify-center px-11 py-11' id="login">
+                <div>
                     <LogoSVG style={{width: '649px', height: '194px'}} />
                 </div>
-                {signUp ? 
-                    <div id="signUpSection">
-                        <div className='flex flex-col items-start px-9 py-11'>
-                            {newLoading ? 
-                                <LoadingSpinner />
-                                :
-                                <form className="flex flex-col items-start" onSubmit={handleSignUp}>
-                                        <p className='h-8 font-primary font-normal text-2xl text-red-500'>
-                                            {newError ? newErrorMessage : null}
-                                        </p>
-                                        <input
-                                            className='w-72 h-8 mt-3 bg-gray-200 rounded-lg font-adelle font-normal text-lg text-black/50 px-2.5 outline-primary'
-                                            type="email"
-                                            value={newEmail}
-                                            onChange={(e) => setNewEmail(e.target.value)}
-                                            placeholder="email"
-                                        />
-                                        <input
-                                            className='w-72 h-8 mt-3 bg-gray-200 rounded-lg font-adelle font-normal text-lg text-black/50 px-2.5 outline-primary'
-                                            type="password"
-                                            value={newPassword}
-                                            onChange={(e) => handleNewPassword(e)}
-                                            placeholder="password"
-                                        />
-                                        <input
-                                            className={`w-72 h-8 mt-3 bg-gray-200 rounded-lg font-adelle font-normal text-lg text-black/50 px-2.5 ${(passwordMatch || blocked) ? 'outline-primary' : 'outline-none border-2 border-red-500' }`}
-                                            type="password"
-                                            value={rePassword}
-                                            onChange={(e) => handleReType(e)}
-                                            onClick={() => setBlocked(false)}
-                                            placeholder="retype password"
-                                        /> <p className={`h-8 font-primary font-normal text-2xl inline text-red-500`}>
-                                        {(passwordMatch || blocked) ? null : "passwords must match"}
-                                        </p> 
-                                        <button type="submit" className='mt-9 flex flex-row items-end'>
-                                        <p className='text-primary font-primary font-normal text-6xl'>sign up</p>
-                                        <ArrowSVG className='h-12 w-12 ml-4'/>
-                                    </button>
-                                </form>
-                            }
+                {landingState === 'sign up' && 
+                    <div>
+                        <SignUpForm changeState={setLandingState}/>
+                        <div className='mt-10'>
+                            <p className='font-primary font-normal text-3xl text-stone-400'>already have an account? <button className='text-primary' onClick={() => setLandingState('login')}>log in.</button></p>
                         </div>
                     </div>
-                    : 
-                    <div id="loginSection">
-                        <div className='h-80 flex flex-col items-start px-9 py-11'>
-                            {loading ? 
-                                <LoadingSpinner />
-                                :
-                                <form className='flex flex-col items-start' onSubmit={handleLogin}>
-                                    
-                                    <div className='flex flex-col items-start'>
-                                        <p className='h-8 font-primary font-normal text-2xl text-red-500'>
-                                            {error ? errorMessage : null}
-                                        </p>
-                                        <input
-                                            className='w-72 h-8 mt-3 bg-gray-200 rounded-lg font-adelle font-normal text-lg text-black/50 px-2.5 outline-primary'
-                                            type="email"
-                                            value={email}
-                                            onChange={(e) => setEmail(e.target.value)}
-                                            placeholder="email"
-                                        />
-                                        <input
-                                            className='w-72 h-8 mt-3 bg-gray-200 rounded-lg font-adelle font-normal text-lg text-black/50 px-2.5 outline-primary'
-                                            type="password"
-                                            value={password}
-                                            onChange={(e) => setPassword(e.target.value)}
-                                            placeholder="password"
-                                        />
-                                    </div>
-                                    <button type="submit" className='mt-9 flex flex-row items-center'>
-                                        <p className='text-primary font-primary font-normal text-6xl'>log in</p>
-                                        <ArrowSVG className='h-12 w-12 ml-4'/>
-                                    </button>
-                                </form>
-                            }   
+                }
+                {landingState === 'login' &&
+                    <div>
+                        <LoginForm />
+                        <div className='mt-10'>
+                            <p className='font-primary font-normal text-3xl text-stone-400'>new here? <button className='text-primary' onClick={() => setLandingState('sign up')}>sign up, it's free.</button></p>
                         </div>
-                                
-                        <div className='ml-9 mt-10'>
-                            <p className='font-primary font-normal text-3xl text-stone-400'>new here? <button className='text-primary' onClick={() => setSignUp(true)}>sign up, it's free.</button></p>
-                        </div>
-                        <div className='ml-9'>
+                        <div>
                             <a className='font-primary font-normal text-xl text-stone-400' href='#forgot'>forgot password</a>
                         </div>
                     </div>
+                }
+                {landingState === 'setup' &&
+                    <UserSetupForm user={user} />
                 }
             </div>
         </div>
