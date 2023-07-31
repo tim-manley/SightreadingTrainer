@@ -8,6 +8,7 @@ import UserSetupForm from '../components/UserSetupForm';
 import { auth, db } from '../firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
+import Loading from './Loading';
 
 function LandingPage() {
 
@@ -32,8 +33,12 @@ function LandingPage() {
                         navigate('/home');
                     } else {
                         setLandingState('setup');
+                        setLoading(false);
                     }
                 })
+            } else {
+                setLandingState('login');
+                setLoading('false');
             }
         })
 
@@ -41,6 +46,10 @@ function LandingPage() {
             unsub();
         })
     }, [navigate]);
+
+    if (loading) {
+        return <Loading />
+    }
 
     return (
         <div id="landingPage" className='h-screen grid grid-cols-6' style={{width: '200%', height: '100vh', overflow: 'hidden'}}>
