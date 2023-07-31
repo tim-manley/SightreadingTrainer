@@ -38,7 +38,7 @@ function LandingPage() {
                 })
             } else {
                 setLandingState('login');
-                setLoading('false');
+                setLoading(false);
             }
         })
 
