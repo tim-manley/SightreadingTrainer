@@ -6,7 +6,6 @@ import progress from '../assets/ProgressIllustration-19 1.svg'
 import LessonCard from '../components/LessonCard'
 import { auth, db } from '../firebase'
 import { doc, getDoc } from 'firebase/firestore'
-import { useDocumentOnce } from 'react-firebase-hooks/firestore'
 import { useState, useEffect } from 'react'
 import Loading from './Loading'
 import ProgressWheel from '../components/ProgressWheel'
@@ -16,7 +15,6 @@ function Home(props) {
 
     const navigate = useNavigate();
 
-    const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(false);
 
     const [userData, setUserData] = useState({})
@@ -27,7 +25,6 @@ function Home(props) {
             if (!user) {
                 navigate('/');
             } else {
-                setUser(user);
                 const docRef = doc(db, 'users', user.uid);
                 getDoc(docRef)
                 .then((docSnap) => {
@@ -45,7 +42,7 @@ function Home(props) {
             unsub();
         })
 
-    }, [])
+    }, [navigate])
 
     if (loading) {
         return (

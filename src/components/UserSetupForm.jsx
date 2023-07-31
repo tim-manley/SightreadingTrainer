@@ -1,4 +1,4 @@
-import { React, useEffect, useState, Fragment } from 'react'
+import { React, useState, Fragment } from 'react'
 import {ReactComponent as ArrowSVG} from '../assets/OnsightArrowGraphic-08 1.svg'
 import {ReactComponent as ChevronSVG} from '../assets/DropdownArrow.svg'
 import LoadingSpinner from './LoadingSpinner';

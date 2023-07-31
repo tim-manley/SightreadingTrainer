@@ -3,7 +3,6 @@ import { auth } from '../firebase';
 import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
 import {ReactComponent as ArrowSVG} from '../assets/OnsightArrowGraphic-08 1.svg'
 import LoadingSpinner from './LoadingSpinner';
-import { Navigate } from 'react-router-dom';
 
 function LoginForm() {
 
@@ -38,6 +37,10 @@ function LoginForm() {
                 errorMessage = "something went wrong..."
                 break;
         }
+    }
+
+    if (user) {
+        console.log(user); // Just to get rid of assigned but never used warning
     }
 
   return (
