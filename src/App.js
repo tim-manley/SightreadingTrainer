@@ -14,64 +14,19 @@ import { doc, getDoc } from 'firebase/firestore';
 
 function App() {
 
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true); // Always start with true
-  const [newUser, setNewUser] = useState(true)
-
-  useEffect(() => {
-    console.log("using an effect here")
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      console.log("auth changed", user);
-      setUser(user); // Set the user object
-      // If there is a user, check if they have a doc
-      if (user) {
-        const docRef = doc(db, "users", user.uid);
-        getDoc(docRef).then((docSnap) => {
-          console.log("Got the docsnap:", docSnap);
-          if (docSnap.data()) {
-            console.log("user has data");
-            setNewUser(false);
-          } else {
-            console.log("user has NO data");
-            setNewUser(true);
-          }
-          setLoading(false);
-        })
-      } else {
-        setLoading(false); // No more loading needed
-      }
-    }, []);
-
-    return () => {
-      unsubscribe();
-    }
-  }, []);
-
-  if (loading) {
-    return <Loading />
-  }
-
   return (
     <BrowserRouter>
-        {(!user || (user && newUser)) && 
-          <Routes>
-            <Route exact path="*" element={<><Navigate to="/" />{console.log("navigating")}</>}/>
-            <Route exact path="/" element={<LandingPage user={user} newUser={newUser}/>}/>
-          </Routes>
-        }
-        {(user && !newUser) &&
-          <Routes>
-            <Route exact path="/" element={<Navigate to="/home"/>}/>
-            <Route exact path="/home" element={<Home user={user} />}/>
-            <Route exact path="/notbuilt" element={<NotBuilt />} />
-            <Route exact path="/quick" element={<Quick user={user} />} />
-            <Route exact path="/focussed" element={<NotBuilt /> } />
-            <Route exact path="/custom" element={<NotBuilt /> } />
-            <Route exact path="/settings" element={<NotBuilt /> } />
-            <Route exact path="/account" element={<AccountPrefs /> } />
-            <Route exact path="/analysis" element={<NotBuilt /> } />
-          </Routes>
-        }
+      <Routes>
+        <Route exact path="/" element={<LandingPage />}/>
+        <Route exact path="/home" element={<Home />}/>
+        <Route exact path="/notbuilt" element={<NotBuilt />} />
+        <Route exact path="/quick" element={<Quick />} />
+        <Route exact path="/focussed" element={<NotBuilt /> } />
+        <Route exact path="/custom" element={<NotBuilt /> } />
+        <Route exact path="/settings" element={<NotBuilt /> } />
+        <Route exact path="/account" element={<AccountPrefs /> } />
+        <Route exact path="/analysis" element={<NotBuilt /> } />
+      </Routes>
     </BrowserRouter>
   );
 }

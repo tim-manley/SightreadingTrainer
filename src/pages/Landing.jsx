@@ -1,22 +1,46 @@
-import { React, useState } from 'react';
+import { React, useEffect, useState } from 'react';
 import {ReactComponent as NotesSVG} from '../assets/NotesArtwork-07.svg'
 import {ReactComponent as LogoSVG} from '../assets/officialLogo-06 1.svg'
 import {ReactComponent as ArrowSVG} from '../assets/OnsightArrowGraphic-08 1.svg'
 import LoginForm from '../components/LoginForm';
 import SignUpForm from '../components/SignUpForm';
-import { Navigate } from 'react-router-dom';
 import UserSetupForm from '../components/UserSetupForm';
+import { auth, db } from '../firebase';
+import { doc, getDoc } from 'firebase/firestore';
+import { useNavigate } from 'react-router-dom';
 
-function LandingPage(props) {
+function LandingPage() {
 
     // Switch state
     const [landingState, setLandingState] = useState('login');
 
-    const { user, newUser } = props;
+    const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(false);
 
-    if (user && newUser && landingState !== 'setup') {
-        setLandingState('setup')
-    }
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        setLoading(true);
+        const unsub = auth.onAuthStateChanged((user) => {
+            setUser(user);
+            if (user) {
+                console.log(user.uid);
+                const docRef = doc(db, "users", user.uid);
+                getDoc(docRef)
+                .then((docSnap) => {
+                    if (docSnap.data()) {
+                        navigate('/home');
+                    } else {
+                        setLandingState('setup');
+                    }
+                })
+            }
+        })
+
+        return (() => {
+            unsub();
+        })
+    }, [navigate]);
 
     return (
         <div id="landingPage" className='h-screen grid grid-cols-6' style={{width: '200%', height: '100vh', overflow: 'hidden'}}>
@@ -52,7 +76,7 @@ function LandingPage(props) {
                 </div>
                 {landingState === 'sign up' && 
                     <div>
-                        <SignUpForm />
+                        <SignUpForm changeState={setLandingState}/>
                         <div className='mt-10'>
                             <p className='font-primary font-normal text-3xl text-stone-400'>already have an account? <button className='text-primary' onClick={() => setLandingState('login')}>log in.</button></p>
                         </div>

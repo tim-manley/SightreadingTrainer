@@ -10,8 +10,6 @@ function ProgressWheel(props) {
     const circumference = normalizedRadius * 2 * Math.PI;
     const strokeDashoffset = circumference - progress / 100 * circumference;
 
-    console.log(text, progress);
-
   return (
     <svg className='w-full h-full'>
       <circle

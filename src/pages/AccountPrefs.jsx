@@ -1,22 +1,55 @@
-import React from 'react'
+import {React, useEffect, useState} from 'react'
 import Navbar from '../components/Navbar'
 import account from '../assets/AccountIconOnsight.svg'
 import notes from '../assets/NotesArtwork-07.svg'
 import { useNavigate } from 'react-router-dom'
 import { auth } from '../firebase'
 import { useSignOut } from 'react-firebase-hooks/auth'
+import Loading from './Loading'
+import { db } from '../firebase'
+import { doc, getDoc } from 'firebase/firestore'
 
 function AccountPrefs() {
 
     const navigate = useNavigate();
 
     const [signOut, loadingSO, errorSO] = useSignOut(auth);
+    const [loading, setLoading] = useState(false);
 
     const handleSignOut = async () => {
         const success = await signOut();
         if (success) {
             alert("Successfully signed out");
+            navigate('/');
         }
+    }
+
+    useEffect(() => {
+        setLoading(true);
+        const unsub = auth.onAuthStateChanged((user) => {
+            if (!user) {
+                navigate('/');
+            } else {
+                const docRef = doc(db, 'users', user.uid);
+                getDoc(docRef)
+                .then((docSnap) => {
+                    if (docSnap.data()) {
+                        setLoading(false);
+                    } else {
+                        navigate('/');
+                    }
+                })
+            }
+        })
+
+        return (() => {
+            unsub();
+        })
+
+    }, [navigate]);
+
+    if (loading) {
+        return <Loading />
     }
     
     if (loadingSO) {

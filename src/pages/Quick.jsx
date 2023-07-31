@@ -10,6 +10,7 @@ import Detector from '../components/Detector'
 import { doc, setDoc, getDoc } from 'firebase/firestore'
 import { db } from '../firebase'
 import Generating from './Generating'
+import { auth } from '../firebase'
 
 function Quick(props) {
 
@@ -19,16 +20,59 @@ function Quick(props) {
 
     let date = moment().format("MMM D");
 
-    const [params, setParams] = useState({
-        numNotes: 10,
-        clef: 'bass',
-        intervals: [], 
-        range: [7, 24],
-    });
+    const [params, setParams] = useState({numNotes: 10});
+
+    const [user, setUser] = useState(null);
+    const [userData, setUserData] = useState({});
+    const [loading, setLoading] = useState(true);
 
     // Passed by reference to checker and updates as notes progress
     let intervals = [];
     let intervalsDelta = new Map(); // interval : delta
+
+    useEffect(() => {
+        setLoading(true);
+        const unsub = auth.onAuthStateChanged((user) => {
+            if (!user) {
+                navigate('/');
+            } else {
+                setUser(user);
+                const docRef = doc(db, 'users', user.uid);
+                getDoc(docRef)
+                .then((docSnap) => {
+                    if (docSnap.data()) {
+                        setUserData(docSnap.data());
+                        let minThree = [null, null, null]
+                        let minThreeVals = [1000, 1000, 1000];
+                        for (const key in docSnap.data().intervalsScores) {
+                            let thisScore = docSnap.data().intervalsScores[key];
+                            let biggestVal = minThreeVals.reduce((a, b) => Math.max(a, b), -Infinity);
+                            let biggestIndex = minThreeVals.indexOf(biggestVal);
+                            if (thisScore < biggestVal) {
+                                minThree[biggestIndex] = parseInt(key);
+                                minThreeVals[biggestIndex] = thisScore;
+                            }
+                        }
+                        console.log("Lowest three scores: ", minThree, minThreeVals);
+                        minThree.push(-2,-1,0,1,2); // DESIGN CHOICE: always include unisons, wholes and halves (bidirectional)
+                        setParams((p) => {return {...p, intervals: minThree, range: docSnap.data().range, clef: docSnap.data().clef}});
+                        // Update loading/error state
+                        setFirestoreState('done'); // Triggers effect to rerender abc
+                    } else {
+                        navigate('/');
+                    }
+                })
+                .catch((err) => {
+                    console.error(err);
+                });
+            }
+        })
+
+        return (() => {
+            unsub();
+        })
+
+    }, [navigate]);
 
     useEffect(() => {
         console.log("using effect")
@@ -38,39 +82,25 @@ function Quick(props) {
             console.log("loaded notes with: ", params);
         }
     }, [firestoreState, params])
-
+    
     const createNewParams = useCallback(() => {
-        getDoc(doc(db, "users", props.user.uid))
-        .then((docRef) => {
-            let minThree = [null, null, null]
-            let minThreeVals = [1000, 1000, 1000];
-            for (const key in docRef.data().intervalsScores) {
-                let thisScore = docRef.data().intervalsScores[key];
-                let biggestVal = minThreeVals.reduce((a, b) => Math.max(a, b), -Infinity);
-                let biggestIndex = minThreeVals.indexOf(biggestVal);
-                if (thisScore < biggestVal) {
-                    minThree[biggestIndex] = parseInt(key);
-                    minThreeVals[biggestIndex] = thisScore;
-                }
+        let minThree = [null, null, null]
+        let minThreeVals = [1000, 1000, 1000];
+        for (const key in userData.intervalsScores) {
+            let thisScore = userData.intervalsScores[key];
+            let biggestVal = minThreeVals.reduce((a, b) => Math.max(a, b), -Infinity);
+            let biggestIndex = minThreeVals.indexOf(biggestVal);
+            if (thisScore < biggestVal) {
+                minThree[biggestIndex] = parseInt(key);
+                minThreeVals[biggestIndex] = thisScore;
             }
-            console.log("Lowest three scores: ", minThree, minThreeVals);
-            minThree.push(-2,-1,0,1,2); // DESIGN CHOICE: always include unisons, wholes and halves (bidirectional)
-            setParams((p) => {return {...p, intervals: minThree}});
-            // Update loading/error state
-            setFirestoreState('done'); // Triggers effect to rerender abc
-        })
-        .catch((error) => {console.error(error)});
-    }, [props.user.uid]);
-
-    // Initial load
-    useEffect(() => {
-        // TODO: Get user scores
-        // TODO: Pick weakest few + determine how many and whether to do in iso
-        // Set generator params based on skills to test (for now manually set)
-        
-        // Generate abc and render it
-        createNewParams();
-    }, [createNewParams]); // Dependency might not work...
+        }
+        console.log("Lowest three scores: ", minThree, minThreeVals);
+        minThree.push(-2,-1,0,1,2); // DESIGN CHOICE: always include unisons, wholes and halves (bidirectional)
+        setParams((p) => {return {...p, intervals: minThree, range: userData.range, clef: userData.clef}});
+        // Update loading/error state
+        setFirestoreState('done'); // Triggers effect to rerender abc
+    }, [userData])
 
     const handleStartClick = () => {
         startPitchDetect();
@@ -82,34 +112,30 @@ function Quick(props) {
         console.log(intervals);
         console.log(intervalsDelta);
         setFirestoreState('loading');
-        // Get user data from firestore
-        getDoc(doc(db, "users", props.user.uid))
-        .then((docRef) => {
             // Extract data
-            let currentData = docRef.data();
-            for (const key in intervalsDelta) {
-                // Update interval scores
-                currentData.intervalsScores[key] += intervalsDelta[key];
+        let currentData = userData;
+        for (const key in intervalsDelta) {
+            // Update interval scores
+            currentData.intervalsScores[key] += intervalsDelta[key];
 
-                // Keep between 0-100
-                if (currentData.intervalsScores[key] > 100) {
-                    currentData.intervalsScores[key] = 100;
-                }
-                if (currentData.intervalsScores[key] < 0) {
-                    currentData.intervalsScores = 0;
-                }
+            // Keep between 0-100
+            if (currentData.intervalsScores[key] > 100) {
+                currentData.intervalsScores[key] = 100;
             }
-            // Calculate total intervals score
-            let vals = Object.values(currentData.intervalsScores);
-            let newIntervalsScore = vals.reduce((acc, c) => acc + c, 0) / vals.length;
-            currentData.intervalsScore = newIntervalsScore;
-            // Update the user in firebase
-            setDoc(doc(db, "users", props.user.uid), currentData)
-            .then(() => {
-                console.log("successfully uploaded to firestore");
-                createNewParams(); // Update the params (which causes new example to load)
-            })
-            .catch((error) => console.error(error));
+            if (currentData.intervalsScores[key] < 0) {
+                currentData.intervalsScores = 0;
+            }
+        }
+        // Calculate total intervals score
+        let vals = Object.values(currentData.intervalsScores);
+        let newIntervalsScore = vals.reduce((acc, c) => acc + c, 0) / vals.length;
+        currentData.intervalsScore = newIntervalsScore;
+        setUserData(currentData);
+        // Update the user in firebase
+        setDoc(doc(db, "users", user.uid), currentData)
+        .then(() => {
+            console.log("successfully uploaded to firestore");
+            createNewParams(); // Update the params (which causes new example to load)
         })
         .catch((error) => console.error(error));
     }

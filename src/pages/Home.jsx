@@ -4,40 +4,52 @@ import settings from '../assets/SettingsIconOnsight.svg'
 import account from '../assets/AccountIconOnsight.svg'
 import progress from '../assets/ProgressIllustration-19 1.svg'
 import LessonCard from '../components/LessonCard'
-import { db } from '../firebase'
-import { doc } from 'firebase/firestore'
+import { auth, db } from '../firebase'
+import { doc, getDoc } from 'firebase/firestore'
 import { useDocumentOnce } from 'react-firebase-hooks/firestore'
 import { useState, useEffect } from 'react'
 import Loading from './Loading'
 import ProgressWheel from '../components/ProgressWheel'
+import { useNavigate } from 'react-router-dom'
 
 function Home(props) {
 
-    const [userDoc, loading, error] = useDocumentOnce(doc(db, "users", props.user.uid));
+    const navigate = useNavigate();
 
-    const [user, setUser] = useState({
-      range: [0, 48],
-      intervalsScore: 10,
-    })
+    const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(false);
+
+    const [userData, setUserData] = useState({})
 
     useEffect(() => {
-      console.log("userDoc changed");
-      if (userDoc) {
-        console.log("userDoc true")
-        console.log(userDoc.data())
-        setUser(userDoc.data())
-      }
-    }, [userDoc])
+        setLoading(true);
+        const unsub = auth.onAuthStateChanged((user) => {
+            if (!user) {
+                navigate('/');
+            } else {
+                setUser(user);
+                const docRef = doc(db, 'users', user.uid);
+                getDoc(docRef)
+                .then((docSnap) => {
+                    if (docSnap.data()) {
+                        setUserData(docSnap.data());
+                        setLoading(false);
+                    } else {
+                        navigate('/');
+                    }
+                })
+            }
+        })
+
+        return (() => {
+            unsub();
+        })
+
+    }, [])
 
     if (loading) {
         return (
             <Loading />
-        );
-    }
-
-    if (error) {
-        return (
-            <p>Error: {error.message}</p>
         );
     }
 
@@ -47,7 +59,7 @@ function Home(props) {
         <div className="mx-24 my-5 flex flex-col">
             <div className="flex flex-row items-center">
                 <div className='w-2/3 text-5xl font-primary font-normal'>
-                    Welcome back, {user ? user.name : null}
+                    Welcome back, {userData.name}
                 </div>
                 <div className="w-1/3 flex flex-row justify-end space-x-8">
                     <div>
@@ -113,9 +125,9 @@ function Home(props) {
                             </div>
                             <div className='w-1/2 h-full flex flex-col'>
                                 <div className='w-full h-5/6 flex flex-row items-center justify-between font-adelle'>
-                                    <ProgressWheel radius={ 60 } stroke={ 12 } progress={ user ? user.overallScore: 0 } text="OVERALL" />
-                                    <ProgressWheel radius={ 60 } stroke={ 4 } progress={ user ? user.intervalsScore : 0 } text='INTERVALS'/>
-                                    <ProgressWheel radius={ 60 } stroke={ 4 } progress={ user ? user.rhythmScore : 0 } text='RHYTHM'/>
+                                    <ProgressWheel radius={ 60 } stroke={ 12 } progress={ userData.overallScore ? userData.overallScore : 0 } text="OVERALL" />
+                                    <ProgressWheel radius={ 60 } stroke={ 4 } progress={ userData.intervalsScore ? userData.intervalsScore : 0 } text='INTERVALS'/>
+                                    <ProgressWheel radius={ 60 } stroke={ 4 } progress={ userData.rhythmScore ? userData.rhythmScore : 0 } text='RHYTHM'/>
                                 </div>
                                 <div className='w-full h-1/6 pr-5 flex flex-row justify-end items-center font-primary text-xl text-account-dark/70'>
                                     <a href="/home">

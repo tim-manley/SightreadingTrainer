@@ -93,12 +93,13 @@ function UserSetupForm(props) {
   return (
     <div className='flex flex-col'>
         <div className='flex flex-col items-start'>
-            <div className='flex items-center mt-14 font-primary font-normal text-6xl text-account-dark'>
-                new user setup
-            </div>
             {loading ? 
                 <LoadingSpinner />
                 :
+                <>
+                <div className='flex items-center mt-14 font-primary font-normal text-6xl text-account-dark'>
+                    new user setup
+                </div>
                 <form className="flex flex-col items-start">
                     <p className='h-8 font-primary font-normal text-2xl text-red-500'>
                         {error ? errorMessage : null}
@@ -241,6 +242,7 @@ function UserSetupForm(props) {
                         <ArrowSVG className='h-12 w-12 ml-4 fill-primary'/>
                     </button>
                 </form>
+                </>
             }
         </div>
     </div>

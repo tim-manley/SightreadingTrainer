@@ -5,7 +5,7 @@ import { Navigate } from 'react-router-dom';
 import LoadingSpinner from './LoadingSpinner';
 import {ReactComponent as ArrowSVG} from '../assets/OnsightArrowGraphic-08 1.svg'
 
-function SignUpForm() {
+function SignUpForm(props) {
 
     // Sign up states
     const [newEmail, setNewEmail] = useState('');
@@ -37,6 +37,8 @@ function SignUpForm() {
         }
         console.log(newEmail, newPassword, rePassword);
         createUserWithEmailAndPassword(newEmail, newPassword);
+        // Change landing state
+        props.changeState('setup');
     }
 
     if (newUser) {
