@@ -65,3 +65,29 @@ export function abcNoteToNoteLabel(abcNote) {
     const noteNum = abcNoteToNoteNum(abcNote);
     return noteNumToLabel(noteNum);
 }
+
+export function abcSynthToRefArray(noteData) {
+    let correctArr = [];
+    let currentDuration = 0;
+    for (let i=0; i<noteData.length; i++) {
+    let note = noteData[i];
+    // Check if it is a note
+    if (note.cmd !== 'note') {
+        continue
+    }
+    // Check if there was a rest
+    if (note.start > currentDuration) {
+        let numRest32s = (note.start - currentDuration) / 0.03125;
+        for (let j=0; j<numRest32s; j++) {
+        correctArr.push(null)
+        }
+        currentDuration = note.start;
+    }
+    let numNote32s = note.duration / 0.03125;
+    for (let j=0; j<numNote32s; j++) {
+        correctArr.push(note.pitch - 36);
+    }
+    currentDuration += note.duration;
+    }
+    return correctArr;
+}

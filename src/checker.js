@@ -71,7 +71,7 @@ function nextNote(intervals) {
     intervals.push(currentNoteNum - prevNoteNum);
 }
 
-export function checker(targetID, numNotes, intervals, intervalsDelta) {
+export function startChecker(targetID, numNotes, intervals, intervalsDelta) {
 
     noteCount = numNotes;
     let correctArray = new Array(noteCount).fill(0);

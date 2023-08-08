@@ -136,8 +136,7 @@ function generatePitch(prevNoteNum, intervals, range, keySignature, diatonic) {
     if (isDiatonic(noteNum, keySignature)) {
         noteString = noteString.slice(1);
     }
-    console.log("Pitch string: ", noteString);
-    return [noteNum, noteString];
+    return [noteNum, noteString, intervalNum];
 }
 
 /**
@@ -153,7 +152,6 @@ function generatePitch(prevNoteNum, intervals, range, keySignature, diatonic) {
  */
 function generateRhythm(rhythms, currentMeasureLength, maxMeasureLength, noteString) {
     // Note string should just be the pitch
-    console.log("Before rhythm added: ", noteString);
     let noteLength = rhythms[Math.floor(Math.random() * rhythms.length)];
     // DESIGN CHOICE: no ties into next bar
     if (currentMeasureLength + noteLength > maxMeasureLength) {
@@ -183,13 +181,11 @@ function generateRhythm(rhythms, currentMeasureLength, maxMeasureLength, noteStr
     } else {
         newNoteString += " ";
     }
-    console.log("After rhythm added: ", newNoteString);
-    return [currentMeasureLength, newNoteString];
+    return [currentMeasureLength, newNoteString, noteLength];
 }
 
 // Creates a sequence of arhythmic notes
 export function generateAbcString(params) {
-    console.log(params);
     // Parse params
     const numNotes = params.numNotes;
     const clef = params.clef;
@@ -200,6 +196,10 @@ export function generateAbcString(params) {
     const timeSignature = params.timeSignature;
     const keySignature = params.keySignature;
     const diatonic = params.diatonic;
+
+    // Interval and rhythm reference arrays (for checking against)
+    const intervalNums = [];
+    const noteLengths = [];
 
     //TODO: Input validation
     // Check numNotes >= 0
@@ -221,7 +221,7 @@ export function generateAbcString(params) {
         }
     }
 
-    let abcString = `X:1\nM:${timeSignature}\nL:1/32\nK:${keySignature} clef=${clef}\nQ:${tempo}\n`;
+    let abcString = `X:1\nM:${timeSignature}\nL:1/32\nK:${keySignature} clef=${clef}\nQ:${tempo} %\n`; // % marks end of header
 
     const flatKey = flatKeys.has(keySignature);
 
@@ -248,40 +248,47 @@ export function generateAbcString(params) {
     if (isDiatonic(noteNum, keySignature)) {
         noteString = noteString.slice(1);
     }
-    console.log("new note pitch string: ", noteString);
+    let noteLength;
     // Add rhythm to first note
-    [currentMeasureLength, noteString] = generateRhythm(rhythms, currentMeasureLength, maxMeasureLength, noteString);
+    [currentMeasureLength, noteString, noteLength] = generateRhythm(rhythms, currentMeasureLength, maxMeasureLength, noteString);
     // Append final note to abcString
     abcString += noteString;
+    // Add noteLength to ref array
+    noteLengths.push(noteLength);
+
+    let intervalNum;
     // For the remaining notes
     for (let i = 1; i < numNotes - 1; i++) {
         // Generate pitch and rhythm for each note, then append the note to abcString
-        console.log("Note number: ", i+1);
-        [noteNum, noteString] = generatePitch(noteNum, intervals, range, keySignature, diatonic);
-        console.log("new note pitch string: ", noteString);
-        [currentMeasureLength, noteString] = generateRhythm(rhythms, currentMeasureLength, maxMeasureLength, noteString);
+        [noteNum, noteString, intervalNum] = generatePitch(noteNum, intervals, range, keySignature, diatonic);
+        [currentMeasureLength, noteString, noteLength] = generateRhythm(rhythms, currentMeasureLength, maxMeasureLength, noteString);
         abcString += noteString;
-        console.log("string is now: ", abcString);
+        // Add vals to ref arrays
+        intervalNums.push(intervalNum);
+        noteLengths.push(noteLength);
     }
     // If there is still space in the last measure, add a final note
     if (currentMeasureLength < maxMeasureLength) {
-        [noteNum, noteString] = generatePitch(noteNum, intervals, range, keySignature, diatonic);
+        [noteNum, noteString, intervalNum] = generatePitch(noteNum, intervals, range, keySignature, diatonic);
         abcString += noteString + (maxMeasureLength - currentMeasureLength) + "|]";
+        // Add to ref arrays
+        intervalNums.push(intervalNum);
+        noteLengths.push(maxMeasureLength - currentMeasureLength);
     } else {
         abcString += "|]";
     }
-    return abcString;
+    return [abcString, intervalNums, noteLengths];
 }
 
 let globalOverlayAbcString = "";
 
-export function newExample(targetID, params) {
-    const abcString = generateAbcString(params);
+export function newExample(params) {
+    const [abcString, intervalNums, noteLengths] = generateAbcString(params);
     globalOverlayAbcString = abcString;
     console.log(abcString);
     // Render overlay example (for live feedback)
     
-    return [abcString];
+    return [abcString, intervalNums, noteLengths];
 }
 
 export function reRenderOverlay(targetID, noteIndex, newNoteNum) {

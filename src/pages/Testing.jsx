@@ -1,8 +1,14 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import abcjs from 'abcjs';
 import { newExample } from '../generator';
+import Detector from '../components/Detector';
+import { startChecker } from '../checker';
+import { abcSynthToRefArray } from '../abcutil';
 
 function Testing() {
+
+  // Returned abcjs object
+  const [renderObj, setRenderObj] = useState(null);
 
     useEffect(() => {
 
@@ -18,13 +24,36 @@ function Testing() {
             diatonic: true
         }
 
-        const [abcString] = newExample('deprecated', params)
+        const [abcString, intervalNums, noteLengths] = newExample(params)
 
         console.log(abcString);
+        console.log(intervalNums);
+        console.log(noteLengths);
 
-        abcjs.renderAbc("target", abcString, { add_classes: true, staffwidth: 600 });
-
+        setRenderObj(abcjs.renderAbc("target", abcString, { add_classes: true, staffwidth: 600 })[0]);
     }, []);
+
+    const handleStart = () => {
+      console.log("start pressed");
+      var audioContext = new window.AudioContext();
+        
+        audioContext.resume().then(() => {
+          let synth = new abcjs.synth.CreateSynth();
+
+          synth.init({
+            visualObj: renderObj
+          }).then((response) => {
+            console.log("Notes loaded: ", response);
+            synth.prime().then((response) => {
+              console.log(response);
+              console.log(synth.getAudioBuffer());
+              let noteData = synth.flattened.tracks[0];
+              const correctArr = abcSynthToRefArray(noteData);
+              console.log("Reference array: ", correctArr);
+            });
+          });
+        });
+    }
 
   return (
     <div>
@@ -32,6 +61,10 @@ function Testing() {
         <div id="target">
 
         </div>
+        <button onClick={handleStart}>
+          Start
+        </button>
+        <Detector />
     </div>
   )
 }

@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import moment from 'moment'
 import { newExample } from '../generator'
 import { startPitchDetect } from '../pitchdetect'
-import { checker } from '../checker'
+import { startChecker } from '../checker'
 import Detector from '../components/Detector'
 import { doc, setDoc, getDoc } from 'firebase/firestore'
 import { db } from '../firebase'
@@ -99,7 +99,7 @@ function Quick(props) {
     const handleStartClick = () => {
         startPitchDetect();
         intervals = []; // Empty the intervals array (or not? Just keep populating to pass into analyze?)
-        checker("notesTarget", params.numNotes, intervals, intervalsDelta); // modifies last 2 params
+        startChecker("notesTarget", params.numNotes, intervals, intervalsDelta); // modifies last 2 params
     };
 
     const handleNextClick = () => {
